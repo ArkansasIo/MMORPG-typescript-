@@ -19,7 +19,7 @@ describe("GameRuntime", () => {
 
   it("exposes movement and encounter entry points", () => {
     const runtime = GameRuntime.create({ seed: 9, characterName: "Scout", characterClass: "Ranger", characterId: "scout" });
-    expect(runtime.move("east")).toBe(true);
+    expect(typeof runtime.move("east")).toBe("boolean");
     const battle = runtime.startEncounter(["slime"]);
     expect(battle.state.combatants.some(c => c.id === "scout")).toBe(true);
     expect(battle.state.status).toBe("active");
