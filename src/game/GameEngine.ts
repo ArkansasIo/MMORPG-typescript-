@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-GAME-ENGINE-0001
  * @module-id ER-MOD-GAME-0001
- * @doc ../../../docs/source/GameEngine.ts.docs.md
- * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../docs/source/GameEngine.ts.docs.md
+ * @master-doc ../../docs/MASTER_DOCUMENTATION.md
  * Purpose: compose core game systems behind a small engine facade.
  */
 import { CombatEngine } from "./combat/CombatEngine";
