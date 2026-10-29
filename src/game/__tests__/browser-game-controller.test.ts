@@ -56,6 +56,7 @@ describe("BrowserGameController", () => {
     const controller = new BrowserGameController(new MemoryStorage());
     controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
     const hero = controller.game.session.character;
+    hero.gold = 100;
     const startingGold = hero.gold;
     expect(controller.buyItem("healing-herb", 2)).toBe(true);
     expect(hero.gold).toBe(startingGold - 8);
@@ -63,5 +64,6 @@ describe("BrowserGameController", () => {
     expect(controller.sellItem("healing-herb", 2)).toBe(true);
     expect(hero.gold).toBe(startingGold - 4);
     expect(controller.game.session.inventory.quantity("healing-herb")).toBe(4);
+    hero.gold = 0;
     expect(controller.buyItem("iron-sword", 1)).toBe(false);
   });
