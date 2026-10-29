@@ -87,6 +87,11 @@ export class GameSession {
     return !!item && this.shop.sell(this.inventory, item, quantity, this.character, rate);
   }
 
+  grantRegisteredItem(itemId: string, quantity = 1): boolean {
+    const item = this.itemDefinitions.get(itemId);
+    return !!item && this.inventory.add(item, quantity);
+  }
+
   registerItemDefinition(item: ItemDefinition): void {
     if (!item.id.trim()) throw new Error("Item definition requires an ID");
     this.itemDefinitions.set(item.id, { ...item });
