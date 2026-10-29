@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-ASSET-CATALOG-0001
  * @module-id ER-MOD-ASSETS-0001
- * @doc ../../../../docs/source/AssetCatalog.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/AssetCatalog.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: preserve and catalog game image, sprite, music, and sound-effect assets.
  */
 export type AssetKind="image"|"sprite"|"tileset"|"music"|"sound";
