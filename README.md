@@ -77,3 +77,13 @@ Do not expose the API publicly without authentication, authorization, TLS, input
 
 ## License
 This project is licensed under the MIT License; see `LICENSE`. Third-party packages, geographic datasets, and future art/audio assets may have separate licenses and must be credited according to their terms.
+
+## Documentation and source organization
+
+The canonical documentation entry point is [Master Documentation](docs/MASTER_DOCUMENTATION.md). It links to the [repository structure standard](docs/REPOSITORY_STRUCTURE.md), [source documentation registry](docs/SOURCE_DOCUMENTATION_INDEX.md), [game design](docs/GAME_DESIGN_DOCUMENT.md), [architecture/UML](docs/ARCHITECTURE_AND_UML.md), and [multiplayer plan](docs/MULTIPLAYER_AND_MODES.md).
+
+Source modules use stable file and module IDs, documentation flags, sidecar explanations, and backlinks. See the registry for the source-to-documentation map. JSON files cannot contain comments without becoming invalid JSON, so their IDs and documentation links are kept in the registry and sidecar documents instead.
+
+### Efficiency and implementation status
+
+The browser prototype still has a relatively large `src/main.ts` composition file. The documented refactor path is to split UI rendering, input, persistence, map generation, and combat orchestration into modules with clear ownership and tests. Avoid creating excessive tiny folders; add a submodule when it provides a meaningful boundary. Current code and documentation describe a prototype, not a production-ready MMORPG. Run `npm run build` locally or in CI to verify compilation; do not infer build success from a commit alone.
