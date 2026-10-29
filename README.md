@@ -124,6 +124,15 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
 
+### Abilities and spell rules
+
+- [Ability engine](src/game/abilities/AbilityEngine.ts) — validates target type, level, mana cost, and resolves damage, healing, and mana restoration.
+- [Starter abilities](src/game/data/Abilities.ts) — Spark, Heavy Strike, Mend, and Second Wind examples.
+- [Ability engine tests](src/game/__tests__/ability-engine.test.ts).
+- [Ability engine module notes](docs/source/AbilityEngine.ts.docs.md).
+
+The ability engine is a reusable rules module. It is not yet connected as the browser's only combat path, and the current character model still needs a first-class mana field before full integration.
+
 ### Starter game data
 
 - [Starter items and quest definitions](src/game/data/StarterContent.ts) — sample consumables, equipment, and quest objectives/rewards.
