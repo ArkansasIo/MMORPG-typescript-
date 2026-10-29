@@ -1,3 +1,10 @@
+/**
+ * @file-id ER-FILE-GAME-TYPES-0001
+ * @module-id ER-MOD-GAME-0001
+ * @doc ../../docs/source/types.ts.docs.md
+ * @master-doc ../../docs/MASTER_DOCUMENTATION.md
+ * @purpose Shared compile-time domain contracts for game entities and combat.
+ */
 export type DamageType = "physical" | "fire" | "ice" | "lightning" | "arcane" | "poison";
 export type StatusEffect = "burning" | "poisoned" | "stunned" | "slowed" | "shielded" | "frightened";
 export type CharacterClass = "Fighter" | "Wizard" | "Cleric" | "Rogue" | "Ranger" | "Paladin" | "Bard" | "Druid" | "Barbarian";
