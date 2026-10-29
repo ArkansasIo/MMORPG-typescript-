@@ -27,11 +27,12 @@ export class SaveRepository {
     return `${this.prefix}:save:${slot}`;
   }
   save(slot: string, value: SessionSave): void {
+    const storageKey = this.key(slot);
     const serialized = encodeSave(value);
     if (new TextEncoder().encode(serialized).byteLength > this.maxSerializedBytes) {
       throw new Error("Save exceeds the configured size limit");
     }
-    this.options.storage.setItem(this.key(slot), serialized);
+    this.options.storage.setItem(storageKey, serialized);
   }
   load(slot: string): SessionSave | undefined {
     const serialized = this.options.storage.getItem(this.key(slot));
