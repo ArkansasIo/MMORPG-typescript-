@@ -131,3 +131,5 @@ These systems are early prototype foundations. The save codec does not authentic
 - [Creature catalog tests](src/game/__tests__/creatures.test.ts).
 
 Quest item rewards are granted only when their item definitions have been registered with the session. Unknown rewards or inventory-capacity failures are returned in `unresolvedItemRewards` so the game can surface them instead of silently losing them.
+- [Weighted encounter tables](src/game/data/EncounterTables.ts) — starter meadow and old-road creature selection with injectable randomness.
+- [Encounter selection tests](src/game/__tests__/encounters.test.ts).
