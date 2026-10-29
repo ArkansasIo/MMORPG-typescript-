@@ -2,7 +2,7 @@
  * @file-id ER-FILE-ASSET-MANIFEST-0001
  * @module-id ER-MOD-ASSETS-0001
  * @doc ./ASSET_PIPELINE.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: central asset manifest; paths are placeholders until media is added.
  */
 import type { AssetEntry } from "./AssetCatalog";
