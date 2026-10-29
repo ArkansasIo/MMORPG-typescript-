@@ -10,6 +10,7 @@ export interface SessionSave {
   mapId: string;
   position: Position;
   inventory: ReturnType<Inventory["list"]>;
+  equipment: ReturnType<Inventory["equippedItems"]>;
   quests: ReturnType<QuestEngine["getProgress"]>[];
 }
 export interface QuestRewardResult {
@@ -125,6 +126,7 @@ export class GameSession {
       mapId: this.map.data.id,
       position: this.position,
       inventory: this.inventory.list(),
+      equipment: this.inventory.equippedItems(),
       quests: [...this.questIds].map(id => this.quests.getProgress(id))
     };
   }
