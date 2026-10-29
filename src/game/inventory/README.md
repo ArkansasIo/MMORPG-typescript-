@@ -6,3 +6,8 @@
 - Source: Inventory.ts (ER-FILE-INVENTORY-ENGINE-0001)
 - Docs: [Master](../../../../docs/MASTER_DOCUMENTATION.md), [Inventory docs](../../../../docs/source/Inventory.ts.docs.md)
 - Status: Partial; persistence and validated item catalog remain future work.
+
+## Crafting extension
+- [CraftingService.ts](./CraftingService.ts) — validates recipes and crafts from inventory materials.
+- [Recipes.ts](../data/Recipes.ts) — starter recipes.
+- [CraftingService docs](../../../docs/source/CraftingService.ts.docs.md) — public API and boundaries.
