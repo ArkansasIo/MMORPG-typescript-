@@ -7,10 +7,10 @@
 - **Status:** Partial
 
 ## Purpose
-Bootstraps and renders the browser prototype and coordinates input, interface state, local saves, and encounters.
+Bootstraps the browser UI and delegates gameplay state to BrowserGameController/GameRuntime. Renders the seeded tile map, character stats, inventory/consumables, quest status, NPC dialogue, combat, and save/continue flows. Keyboard, mouse, and browser Gamepad API input are handled at the UI boundary.
 
 ## Efficiency and maintenance
-This file is currently a large composition module. As the project grows, extract UI rendering, input adapters, save/load, map generation, and combat orchestration into focused modules. Keep shared state explicit; avoid duplicate event handlers when rerendering. Prefer DOM event delegation or stable listeners and update only the UI region that changed.
+This file remains the browser composition module. Domain rules live in src/game; controller calls are the state boundary. The current renderer replaces the app DOM on state changes and reattaches scoped event handlers. Extract rendering and input adapters into focused modules as the UI expands.
 
 ## Security and boundaries
 Browser state is not trusted by an online server. The client is not an authoritative multiplayer simulation. Real authentication, server-authoritative combat, persistence, and network sessions remain unimplemented.
