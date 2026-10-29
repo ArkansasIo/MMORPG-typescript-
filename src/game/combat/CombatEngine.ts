@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-COMBAT-ENGINE-0001
  * @module-id ER-MOD-COMBAT-0001
- * @doc ../../../../docs/source/CombatEngine.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/CombatEngine.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: deterministic-friendly turn based combat and combat log.
  */
 import type { AbilityScores, Combatant, DamageType, StatusEffect } from "../types";
