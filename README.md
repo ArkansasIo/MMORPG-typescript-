@@ -112,3 +112,14 @@ The browser prototype still has a relatively large `src/main.ts` composition fil
 
 ### Start the backend
 From repository root, copy `.env.example` to `.env`, set your MySQL credentials, then initialize the schema with `mysql -u root -p < database/schema.sql`. In a separate terminal run `cd server && npm install && npm run dev`. The guest endpoint is a basic stored profile, not an authentication system. Online multiplayer, account authentication, and authoritative combat still require implementation.
+
+
+### Integrated gameplay modules
+
+- [Game session orchestration](src/game/GameSession.ts) — movement, quests, rewards, inventory, and save snapshots.
+- [Versioned save codec](src/game/persistence/SaveCodec.ts) — JSON serialization and runtime structure checks.
+- [Seeded procedural world generator](src/game/world/WorldGenerator.ts) — deterministic walkable/blocking terrain for prototype regions.
+- [Game session module notes](docs/source/GameSession.ts.docs.md).
+- [Save codec module notes](docs/source/SaveCodec.ts.docs.md).
+
+These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
