@@ -3,7 +3,6 @@ import { CombatEngine } from "../combat/CombatEngine";
 import type { Combatant } from "../types";
 
 const unit = (overrides: Partial<Combatant> & Pick<Combatant, "id" | "name">): Combatant => ({
-  ...overrides,
   level: 1, hp: 10, maxHp: 10, defense: 1, speed: 1,
   abilities: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
   proficiencyBonus: 2, attackBonus: 0, damage: 1, damageType: "physical",
