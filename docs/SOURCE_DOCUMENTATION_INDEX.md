@@ -13,3 +13,5 @@ This is the canonical mapping between IDs, source paths, and sidecar docs. Updat
 | ER-FILE-HTML-ENTRY-0001 | ER-MOD-CLIENT-0001 | [index.html](../index.html) | [index.html.docs.md](./source/index.html.docs.md) | Implemented |
 
 IDs are stable and must never be reused. Planned entries must explicitly say Planned; do not list files as implemented unless they exist.
+| ER-FILE-WORLD-TILEMAP-0001 | ER-MOD-WORLD-0001 | [src/game/world/TileMap.ts](../src/game/world/TileMap.ts) | [TileMap.ts.docs.md](./source/TileMap.ts.docs.md) | Partial |
+| ER-FILE-WORLD-COLLISION-0001 | ER-MOD-WORLD-0001 | [src/game/world/CollisionSystem.ts](../src/game/world/CollisionSystem.ts) | [CollisionSystem.ts.docs.md](./source/CollisionSystem.ts.docs.md) | Partial |
