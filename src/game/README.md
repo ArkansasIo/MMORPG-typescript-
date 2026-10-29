@@ -2,8 +2,8 @@
 - **Folder ID:** ER-DIR-GAME-0001
 - **Module ID:** ER-MOD-GAME-0001
 - **Parent ID:** ER-MOD-CLIENT-0001
-- **Purpose:** Shared domain types and rules kept independent from DOM rendering.
-- **Current files:** `types.ts` (ER-FILE-GAME-TYPES-0001).
-- **Potential submodules:** characters, combat, world, quests, inventory. Create each only when it owns enough code to justify the boundary.
-- **Documentation:** [Master](../../docs/MASTER_DOCUMENTATION.md) · [Registry](../../docs/SOURCE_DOCUMENTATION_INDEX.md) · [types docs](../../docs/source/types.ts.docs.md)
-- **Status:** Partial
+- **Purpose:** UI-independent gameplay rules and domain systems.
+- **Core facade:** `GameEngine.ts` (ER-FILE-GAME-ENGINE-0001).
+- **Submodules:** `world/` maps/collision; `character/` attributes/progression; `combat/` turn-based battle; `effects/` buffs/debuffs; `inventory/` items/equipment/shop; `quests/` objectives/rewards; `assets/` media catalog/audio playback.
+- **Documentation:** [Master](../../docs/MASTER_DOCUMENTATION.md), [registry](../../docs/SOURCE_DOCUMENTATION_INDEX.md), [classic JRPG plan](../../docs/CLASSIC_JRPG_ADAPTATION.md).
+- **Status:** Core rules foundations implemented; not yet all wired into the UI or multiplayer server.
