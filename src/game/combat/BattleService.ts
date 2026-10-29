@@ -55,6 +55,9 @@ export class BattleService {
     if (action.kind === "attack" && !this.enemies.some(e => e.id === action.targetId)) {
       throw new Error("Player attacks must target an enemy");
     }
+    if (action.kind === "heal" && !this.state.playerSideIds.includes(action.targetId)) {
+      throw new Error("Player healing must target an ally");
+    }
     this.state = this.engine.act(this.state, action);
     this.syncPlayer();
     this.resolveEnemyTurns();
@@ -86,7 +89,8 @@ export class BattleService {
       const creature = getCreature(sourceId);
       const goldRange = creature.goldMax - creature.goldMin + 1;
       const roll = this.random();
-      const gold = creature.goldMin + Math.floor(Math.min(0.999999999, Math.max(0, roll)) * goldRange);
+      if (!Number.isFinite(roll) || roll < 0 || roll >= 1) throw new RangeError("Random source must return a value in [0, 1)");
+      const gold = creature.goldMin + Math.floor(roll * goldRange);
       this.session.character.gainXp(creature.xpReward);
       this.session.character.gold += gold;
       this.xpAwarded += creature.xpReward;
