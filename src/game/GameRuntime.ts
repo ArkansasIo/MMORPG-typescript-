@@ -74,6 +74,7 @@ export class GameRuntime {
     for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
     for (const quest of STARTER_QUESTS) session.registerQuest(quest);
     session.addItem(STARTER_ITEMS[0], 2);
+    session.addItem(STARTER_ITEMS[3], 4);
     session.addItem(STARTER_ITEMS[1]);
     session.equipItem("iron-sword");
     return new GameRuntime(session, new BattleService(session));
