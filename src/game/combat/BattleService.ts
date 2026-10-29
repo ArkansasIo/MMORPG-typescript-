@@ -15,6 +15,9 @@ export class BattleService {
   private state?: CombatState;
   private enemies: Combatant[] = [];
   private rewarded = new Set<string>();
+  private xpAwarded = 0;
+  private goldAwarded = 0;
+  private questRewards: QuestRewardResult[] = [];
 
   constructor(
     private readonly session: GameSession,
@@ -37,6 +40,9 @@ export class BattleService {
       ...this.enemies.map(enemy => ({ ...enemy, abilities: { ...enemy.abilities }, conditions: [...(enemy.conditions ?? [])] }))
     ];
     this.rewarded.clear();
+    this.xpAwarded = 0;
+    this.goldAwarded = 0;
+    this.questRewards = [];
     this.state = this.engine.start(combatants, [player.id]);
     this.resolveEnemyTurns();
     return this.result();
@@ -50,6 +56,7 @@ export class BattleService {
       throw new Error("Player attacks must target an enemy");
     }
     this.state = this.engine.act(this.state, action);
+    this.syncPlayer();
     this.resolveEnemyTurns();
     this.awardVictoryRewards();
     return this.result();
@@ -64,13 +71,14 @@ export class BattleService {
       const target = this.state.combatants.find(c => c.id === player.id);
       if (!target || target.hp <= 0) break;
       this.state = this.engine.act(this.state, { kind: "attack", targetId: player.id });
+      this.syncPlayer();
     }
     this.awardVictoryRewards();
   }
 
   private awardVictoryRewards(): void {
     if (!this.state || this.state.status !== "victory") return;
-    const defeated = this.state.combatants.filter(c => !this.session.character.id.includes(c.id) && c.hp <= 0);
+    const defeated = this.state.combatants.filter(c => c.id !== this.session.character.id && c.hp <= 0);
     for (const enemy of defeated) {
       const sourceId = enemy.id.replace(/^enemy-\d+-/, "");
       if (this.rewarded.has(enemy.id)) continue;
@@ -81,8 +89,16 @@ export class BattleService {
       const gold = creature.goldMin + Math.floor(Math.min(0.999999999, Math.max(0, roll)) * goldRange);
       this.session.character.gainXp(creature.xpReward);
       this.session.character.gold += gold;
-      this.session.recordObjective("kill", creature.id);
+      this.xpAwarded += creature.xpReward;
+      this.goldAwarded += gold;
+      this.questRewards.push(this.session.recordObjective("kill", creature.id));
     }
+  }
+
+  private syncPlayer(): void {
+    if (!this.state) return;
+    const combatant = this.state.combatants.find(c => c.id === this.session.character.id);
+    if (combatant) this.session.character.hp = Math.max(0, Math.min(this.session.character.maxHp, combatant.hp));
   }
 
   private toCombatant(character: Character): Combatant {
@@ -96,6 +112,6 @@ export class BattleService {
 
   private result(): BattleResult {
     if (!this.state) throw new Error("Battle has not started");
-    return { state: this.state, xpAwarded: 0, goldAwarded: 0, questRewards: [] };
+    return { state: this.state, xpAwarded: this.xpAwarded, goldAwarded: this.goldAwarded, questRewards: [...this.questRewards] };
   }
 }
