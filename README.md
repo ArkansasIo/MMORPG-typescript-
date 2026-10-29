@@ -124,6 +124,15 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
 
+### Consumable items
+
+- [Consumable service](src/game/inventory/ConsumableService.ts) — validates inventory ownership, applies healing, and consumes one item transactionally.
+- [Starter consumable effects](src/game/data/Consumables.ts) — Small Potion restores up to 15 HP.
+- [Consumable tests](src/game/__tests__/consumable-service.test.ts).
+- [Consumable documentation](docs/source/ConsumableService.ts.docs.md).
+
+The effect service is a tested gameplay module; it still needs to be wired into the browser inventory UI.
+
 ### Save slots and game interactions
 
 - [Save repository](src/game/persistence/SaveRepository.ts) — namespaced save slots, payload-size limits, and codec validation.
