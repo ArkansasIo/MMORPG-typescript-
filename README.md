@@ -124,6 +124,15 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
 
+### NPC dialogue
+
+- [Dialogue engine](src/game/dialogue/DialogueEngine.ts) — validated, branching conversation trees.
+- [Starter NPC dialogue](src/game/data/Dialogue.ts) — village elder warning and quest-related choices.
+- [Dialogue engine tests](src/game/__tests__/dialogue-engine.test.ts).
+- [Dialogue engine notes](docs/source/DialogueEngine.ts.docs.md).
+
+Dialogue choices expose optional quest IDs for the UI to process. Dialogue rendering, persistent conversation flags, and automatic quest acceptance still need integration.
+
 ### Abilities and spell rules
 
 - [Ability engine](src/game/abilities/AbilityEngine.ts) — validates target type, level, mana cost, and resolves damage, healing, and mana restoration.
