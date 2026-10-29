@@ -14,7 +14,7 @@ export const ENCOUNTER_TABLES: Record<string, EncounterTable> = {
 export function rollEncounter(tableId: string, random: () => number = Math.random): CreatureDefinition {
   const table = ENCOUNTER_TABLES[tableId];
   if (!table) throw new Error(`Unknown encounter table: ${tableId}`);
-  const available = table.creatureIds.map(id => CREATURES[id]).filter(Boolean);
+  const available = table.creatureIds.map(id => CREATURES[id]).filter((creature): creature is CreatureDefinition => creature !== undefined);
   if (available.length === 0) throw new Error(`Encounter table has no valid creatures: ${tableId}`);
   const total = available.reduce((sum, creature) => sum + creature.encounterWeight, 0);
   const value = random();
