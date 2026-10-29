@@ -17,12 +17,14 @@ export interface QuestRewardResult {
   xpAwarded: number;
   goldAwarded: number;
   itemRewards: string[];
+  unresolvedItemRewards: string[];
 }
 
 export class GameSession {
   readonly inventory: Inventory;
   readonly quests = new QuestEngine();
   private readonly questIds = new Set<string>();
+  private readonly itemDefinitions = new Map<string, ItemDefinition>();
   private readonly collision: CollisionSystem;
   private currentPosition: Position;
 
@@ -54,11 +56,17 @@ export class GameSession {
   acceptQuest(id: string): boolean { return this.quests.accept(id); }
   addItem(item: ItemDefinition, quantity = 1): boolean { return this.inventory.add(item, quantity); }
 
+  registerItemDefinition(item: ItemDefinition): void {
+    if (!item.id.trim()) throw new Error("Item definition requires an ID");
+    this.itemDefinitions.set(item.id, { ...item });
+  }
+
   recordObjective(kind: ObjectiveKind, targetId: string, amount = 1): QuestRewardResult {
     const completed = this.quests.record(kind, targetId, amount);
     let xpAwarded = 0;
     let goldAwarded = 0;
     const itemRewards: string[] = [];
+    const unresolvedItemRewards: string[] = [];
     for (const quest of completed) {
       const xp = Math.floor(quest.reward.xp);
       const gold = Math.floor(quest.reward.gold);
@@ -70,9 +78,14 @@ export class GameSession {
         this.character.gold += gold;
         goldAwarded += gold;
       }
-      itemRewards.push(...(quest.reward.itemIds ?? []));
+      for (const itemId of quest.reward.itemIds ?? []) {
+        const item = this.itemDefinitions.get(itemId);
+        if (!item) { unresolvedItemRewards.push(itemId); continue; }
+        if (this.inventory.add(item)) itemRewards.push(itemId);
+        else unresolvedItemRewards.push(itemId);
+      }
     }
-    return { completedQuestIds: completed.map(q => q.id), xpAwarded, goldAwarded, itemRewards };
+    return { completedQuestIds: completed.map(q => q.id), xpAwarded, goldAwarded, itemRewards, unresolvedItemRewards };
   }
 
   save(): SessionSave {
