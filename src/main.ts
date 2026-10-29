@@ -62,6 +62,13 @@ function tabContent(): string {
     }).join("") : "<p>Your inventory is empty.</p>"}</div>
     <p class="hint">Equipped: ${Object.entries(session.save().equipment).map(([slot, id]) => `${escapeHtml(slot)}: ${escapeHtml(id)}`).join(" · ") || "nothing"}</p>`;
   }
+  if (selectedTab === "Crafting") {
+    return controller.listRecipes().map(recipe => {
+      const ingredients = recipe.ingredients.map(item => `${item.quantity} × ${item.itemId.replace(/-/g, " ")}`).join(", ");
+      const canCraft = controller.canCraft(recipe.id);
+      return `<div class="quest-row"><b>${escapeHtml(recipe.name)}</b><p>${escapeHtml(recipe.description ?? "Craft an item from gathered materials.")}</p><p class="hint">Requires: ${escapeHtml(ingredients)}</p><p class="hint">Produces: ${recipe.output.quantity} × ${escapeHtml(recipe.output.itemId.replace(/-/g, " "))}</p><button data-craft="${escapeHtml(recipe.id)}" ${canCraft ? "" : "disabled"}>${canCraft ? "Craft item" : "Missing materials"}</button></div>`;
+    }).join("");
+  }
   if (selectedTab === "Quests") {
     const quests = [
       { id: "meadow-first-steps", title: "First Steps", objective: "Visit the meadow marker." },
@@ -118,7 +125,7 @@ function render(): void {
   }).join("");
   const status = game.battles.currentBattle?.status;
   app!.innerHTML = `<header><div class="brand"><span>✦</span><div><b>EARTHBOUND REALMS</b><small>TYPE SCRIPT RPG · PLAYABLE PROTOTYPE</small></div></div><div class="topbuttons"><span>Seeded world</span><button id="save-game">Save</button><button id="main-menu">Main menu</button></div></header>
-  <nav>${["Character", "Inventory", "Quests", "World Map", "Codex"].map(tab => `<button data-tab="${tab}" class="${selectedTab === tab ? "active" : ""}">${tab}</button>`).join("")}</nav>
+  <nav>${["Character", "Inventory", "Crafting", "Quests", "World Map", "Codex"].map(tab => `<button data-tab="${tab}" class="${selectedTab === tab ? "active" : ""}">${tab}</button>`).join("")}</nav>
   <main><aside class="panel"><h3>ADVENTURER</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
   <section><div class="panel maphead"><div><h3>WORLD EXPLORER</h3><h1>The Old World Frontier</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
   <div class="mapwrap"><div class="map" style="--scale:${zoom};grid-template-columns:repeat(${map.width},24px);grid-template-rows:repeat(${map.height},24px);">${cells}</div></div>
@@ -151,6 +158,10 @@ function render(): void {
   app!.querySelector<HTMLButtonElement>("#zoom-in")!.onclick = () => { zoom = Math.min(1.4, zoom + .1); render(); };
   app!.querySelectorAll<HTMLButtonElement>("[data-use-item]").forEach(button => button.onclick = () => {
     const result = controller.useItem(button.dataset.useItem!); log = result.message; render();
+  });
+  app!.querySelectorAll<HTMLButtonElement>("[data-craft]").forEach(button => button.onclick = () => {
+    try { const result = controller.craftItem(button.dataset.craft!); log = result.message; render(); }
+    catch (error) { log = error instanceof Error ? error.message : "Crafting failed."; render(); }
   });
   app!.querySelector<HTMLButtonElement>("#visit-marker")?.addEventListener("click", () => {
     const result = session.recordObjective("visit", "meadow-marker");
