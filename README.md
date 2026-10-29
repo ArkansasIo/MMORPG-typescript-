@@ -13,10 +13,13 @@ Earthbound Realms is an original retro fantasy RPG prototype combining classic m
 - Character name/class/seed setup, named local save slot, and continue-from-save flow powered by the game runtime.
 - Seeded procedural tile region rendered from the game runtime, with collision-aware movement and zoom.
 - Keyboard (WASD/arrows), mouse tile clicks, on-screen directional pad, and browser Gamepad API movement/action input where supported.
-- Runtime-backed encounters, turn-based combat, HP, XP, leveling, gold, equipment bonuses, consumables, crafting recipes, quests, and NPC dialogue.
+- Runtime-backed encounters, turn-based combat, HP, XP, leveling, gold, equipment bonuses, consumables, a buy/sell shop, crafting recipes, quests, and NPC dialogue.
 - Express API starter, MySQL schema, environment template, and cron-job scaffolding.
 - Design documents for game systems, modes, story campaign, realms, and architecture/UML.
 
+
+### Shop
+The Shop tab lists starter catalog items and allows buying or selling one item per action. Buying checks available gold and inventory capacity; selling pays half the listed item price. Transactions use the existing game-session shop service.
 
 ### Crafting
 The browser includes a Crafting tab with two starter recipes: two healing herbs make one Small Potion, and four healing herbs make one Travel Cloak. Crafting checks ingredient counts and inventory capacity before consuming materials. The local character starts with four healing herbs to exercise the system.
