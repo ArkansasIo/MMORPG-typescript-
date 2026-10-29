@@ -142,3 +142,6 @@ Quest item rewards are granted only when their item definitions have been regist
 - [Runtime factory](src/game/GameRuntime.ts) now equips the starter iron sword and exposes random encounter startup.
 - Session equipment slots are included in save snapshots, and equipped weapon/armor bonuses are applied when battle stats are created.
 - [Combat outcome regression tests](src/game/__tests__/combat-outcomes.test.ts) cover both player victory and defeat.
+- [Creature loot tables](src/game/data/LootTables.ts) — chance-based drops, quantity ranges, and deterministic test support.
+- [Loot table tests](src/game/__tests__/loot-tables.test.ts).
+- Creature victory rewards now include XP, gold, kill-quest progress, and registered item drops through [BattleService](src/game/combat/BattleService.ts).
