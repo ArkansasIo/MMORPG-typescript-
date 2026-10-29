@@ -20,6 +20,8 @@ jobs:
           node-version: 22
       - name: Install client dependencies
         run: npm install
+      - name: Run game-system unit tests
+        run: npm test
       - name: Type-check and build client
         run: npm run build
 
