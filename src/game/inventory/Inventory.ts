@@ -13,7 +13,7 @@ export class Inventory {
  constructor(readonly capacity=30){if(!Number.isInteger(capacity)||capacity<1)throw new Error("Capacity must be positive");}
  list():ItemStack[]{return this.stacks.map(s=>({...s}));}
  quantity(itemId:string):number{return this.stacks.filter(s=>s.itemId===itemId).reduce((n,s)=>n+s.quantity,0);}
- add(item:ItemDefinition,quantity=1):boolean {if(!Number.isInteger(quantity)||quantity<1)throw new Error("Quantity must be a positive integer");const next=this.stacks.map(s=>({...s}));let left=quantity;
+ add(item:ItemDefinition,quantity=1):boolean {if(!Number.isInteger(quantity)||quantity<1)throw new Error("Quantity must be a positive integer");if(!item.id.trim()||!Number.isInteger(item.maxStack)||item.maxStack<1||!Number.isFinite(item.price)||item.price<0)throw new Error("Item definition is invalid");const next=this.stacks.map(s=>({...s}));let left=quantity;
   if(item.stackable){const stack=next.find(s=>s.itemId===item.id&&s.quantity<item.maxStack);if(stack){const n=Math.min(left,item.maxStack-stack.quantity);stack.quantity+=n;left-=n;}}
   while(left>0){if(next.length>=this.capacity)return false;const n=item.stackable?Math.min(left,item.maxStack):1;next.push({itemId:item.id,quantity:n});left-=n;}this.stacks=next;return true;
  }
@@ -22,6 +22,6 @@ export class Inventory {
  equippedItems():Record<string,string>{return Object.fromEntries(this.equipped);}
 }
 export class ShopService {
- buy(inventory:Inventory,item:ItemDefinition,quantity:number,wallet:{gold:number}):boolean {const cost=item.price*quantity;if(!Number.isSafeInteger(cost)||cost<0||wallet.gold<cost)return false;if(!inventory.add(item,quantity))return false;wallet.gold-=cost;return true;}
- sell(inventory:Inventory,item:ItemDefinition,quantity:number,wallet:{gold:number},rate=.5):boolean {if(!Number.isFinite(rate)||rate<0||rate>1)return false;if(!inventory.remove(item.id,quantity))return false;wallet.gold+=Math.floor(item.price*quantity*rate);return true;}
+ buy(inventory:Inventory,item:ItemDefinition,quantity:number,wallet:{gold:number}):boolean {if(!Number.isInteger(quantity)||quantity<1||!Number.isSafeInteger(wallet.gold)||wallet.gold<0)return false;const cost=item.price*quantity;if(!Number.isSafeInteger(cost)||cost<0||wallet.gold<cost)return false;try{if(!inventory.add(item,quantity))return false;}catch{return false;}wallet.gold-=cost;return true;}
+ sell(inventory:Inventory,item:ItemDefinition,quantity:number,wallet:{gold:number},rate=.5):boolean {if(!Number.isInteger(quantity)||quantity<1||!Number.isSafeInteger(wallet.gold)||wallet.gold<0||!Number.isFinite(rate)||rate<0||rate>1)return false;const proceeds=Math.floor(item.price*quantity*rate);if(!Number.isSafeInteger(proceeds)||!Number.isSafeInteger(wallet.gold+proceeds))return false;if(!inventory.remove(item.id,quantity))return false;wallet.gold+=proceeds;return true;}
 }
