@@ -139,3 +139,5 @@ Quest item rewards are granted only when their item definitions have been regist
 - [GameRuntime](src/game/GameRuntime.ts) — composition factory for seeded region, character, starter inventory/quests, and battle service.
 - [GameRuntime module notes](docs/source/GameRuntime.ts.docs.md).
 - [GameRuntime tests](src/game/__tests__/game-runtime.test.ts).
+- [Runtime factory](src/game/GameRuntime.ts) now equips the starter iron sword and exposes random encounter startup.
+- Session equipment slots are included in save snapshots, and equipped weapon/armor bonuses are applied when battle stats are created.
