@@ -25,7 +25,8 @@ describe("GameRuntime", () => {
     const battle = runtime.startEncounter(["slime"]);
     expect(battle.state.combatants.some(c => c.id === "scout")).toBe(true);
     expect(battle.state.status).toBe("active");
-    const randomBattle = runtime.startRandomEncounter("meadow");
+    const randomRuntime = GameRuntime.create({ seed: 10, characterName: "Random", characterClass: "Fighter", characterId: "random-hero" });
+    const randomBattle = randomRuntime.startRandomEncounter("meadow");
     expect(randomBattle.state.combatants.length).toBeGreaterThanOrEqual(2);
   });
 });
