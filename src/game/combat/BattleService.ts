@@ -106,10 +106,11 @@ export class BattleService {
   }
 
   private toCombatant(character: Character): Combatant {
+    const gear = this.session.equipmentBonuses();
     return {
       id: character.id, name: character.name, level: character.level, hp: character.hp, maxHp: character.maxHp,
-      defense: character.defense, speed: character.speed, abilities: { ...character.abilities },
-      proficiencyBonus: character.proficiencyBonus, attackBonus: character.attackBonus, damage: character.damage,
+      defense: character.defense + gear.defense, speed: character.speed, abilities: { ...character.abilities },
+      proficiencyBonus: character.proficiencyBonus, attackBonus: character.attackBonus + gear.attackBonus, damage: character.damage,
       damageType: character.damageType, conditions: [...character.conditions]
     };
   }
