@@ -70,4 +70,19 @@ describe("Integrated game session", () => {
     expect(result.itemRewards).toEqual(["small-potion"]);
     expect(session.inventory.quantity("small-potion")).toBe(1);
   });
+
+  it("applies equipment bonuses and performs shop transactions safely", () => {
+    const character = new Character("Merchant", "Fighter", { id: "merchant-hero" });
+    character.gold = 100;
+    const session = new GameSession(character, makeMap(), { x: 0, y: 0 });
+    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
+    expect(session.addItem(STARTER_ITEMS[1])).toBe(true);
+    expect(session.equipItem("iron-sword")).toBe(true);
+    expect(session.equipmentBonuses()).toEqual({ attackBonus: 2, defense: 0 });
+    expect(session.buyItem("small-potion", 2)).toBe(true);
+    expect(character.gold).toBe(76);
+    expect(session.sellItem("small-potion", 1)).toBe(true);
+    expect(character.gold).toBe(82);
+    expect(session.save().equipment).toEqual({ weapon: "iron-sword" });
+  });
 });
