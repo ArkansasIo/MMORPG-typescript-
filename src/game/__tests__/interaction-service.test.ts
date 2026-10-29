@@ -15,6 +15,7 @@ function makeSession() {
 describe("InteractionService", () => {
   it("accepts an available quest from a dialogue choice", () => {
     const session = makeSession();
+    session.recordObjective("visit", "meadow-marker");
     const interactions = new InteractionService(session, STARTER_DIALOGUE);
     const result = interactions.chooseDialogue("meadow-elder", "greeting", "offer-help");
     expect(result.questAccepted).toBe("slime-trouble");
