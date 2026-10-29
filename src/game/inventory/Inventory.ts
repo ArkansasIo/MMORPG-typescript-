@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-INVENTORY-ENGINE-0001
  * @module-id ER-MOD-INVENTORY-0001
- * @doc ../../../../docs/source/Inventory.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/Inventory.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: item stacks, equipment slots, currency, and shop transactions.
  */
 export type ItemKind="consumable"|"weapon"|"armor"|"quest"|"material";
