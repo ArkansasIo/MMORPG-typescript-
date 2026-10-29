@@ -4,5 +4,5 @@
 - Parent ID: ER-MOD-GAME-0001
 - Purpose: ability scores, class defaults, hit points, XP and level progression.
 - Source: Character.ts (ER-FILE-CHARACTER-CORE-0001)
-- Docs: [Master](../../../../docs/MASTER_DOCUMENTATION.md), [Character docs](../../../../docs/source/Character.ts.docs.md)
+- Docs: [Master](../../../docs/MASTER_DOCUMENTATION.md), [Character docs](../../../docs/source/Character.ts.docs.md)
 - Status: Partial prototype.
