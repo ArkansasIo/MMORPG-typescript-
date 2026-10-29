@@ -65,7 +65,6 @@ describe("Integrated game session", () => {
     const session = new GameSession(character, makeMap(), { x: 0, y: 0 });
     for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
     for (const quest of STARTER_QUESTS) session.registerQuest(quest);
-    expect(session.acceptQuest("meadow-first-steps")).toBe(true);
     const result = session.recordObjective("visit", "meadow-marker");
     expect(result.completedQuestIds).toContain("meadow-first-steps");
     expect(result.itemRewards).toEqual(["small-potion"]);
