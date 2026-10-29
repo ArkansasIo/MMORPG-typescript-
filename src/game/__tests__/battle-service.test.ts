@@ -4,6 +4,7 @@ import { GameSession } from "../GameSession";
 import { BattleService } from "../combat/BattleService";
 import { CombatEngine } from "../combat/CombatEngine";
 import { TileMap } from "../world/TileMap";
+import { STARTER_ITEMS } from "../data/StarterContent";
 
 function sessionFor(character: Character): GameSession {
   const map = new TileMap({
@@ -17,6 +18,7 @@ describe("BattleService", () => {
   it("awards XP and gold once when the player defeats a creature", () => {
     const character = new Character("Hero", "Fighter", { id: "battle-hero" });
     const session = sessionFor(character);
+    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
     const battle = new BattleService(session, new CombatEngine(() => 0.99), () => 0);
     const started = battle.start(["slime"]);
     expect(started.state.status).toBe("active");
@@ -27,6 +29,8 @@ describe("BattleService", () => {
     expect(result.state.status).toBe("victory");
     expect(result.xpAwarded).toBe(8);
     expect(result.goldAwarded).toBe(1);
+    expect(result.itemsAwarded).toEqual([{ itemId: "small-potion", quantity: 1 }]);
+    expect(session.inventory.quantity("small-potion")).toBe(1);
     expect(character.xp).toBe(8);
     expect(character.gold).toBe(1);
     expect(battle.playerAction).toBeDefined();
