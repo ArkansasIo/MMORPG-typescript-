@@ -6,6 +6,8 @@ describe("GameRuntime", () => {
     const runtime = GameRuntime.create({ seed: 42, characterName: "Wayfarer", characterClass: "Fighter", characterId: "runtime-hero" });
     expect(runtime.session.map.data.width).toBe(25);
     expect(runtime.session.inventory.quantity("small-potion")).toBe(2);
+    expect(runtime.session.inventory.quantity("iron-sword")).toBe(1);
+    expect(runtime.session.equipmentBonuses().attackBonus).toBe(2);
     expect(runtime.session.quests.getProgress("meadow-first-steps").status).toBe("active");
     expect(runtime.save().character.id).toBe("runtime-hero");
   });
@@ -23,5 +25,7 @@ describe("GameRuntime", () => {
     const battle = runtime.startEncounter(["slime"]);
     expect(battle.state.combatants.some(c => c.id === "scout")).toBe(true);
     expect(battle.state.status).toBe("active");
+    const randomBattle = runtime.startRandomEncounter("meadow");
+    expect(randomBattle.state.combatants.length).toBeGreaterThanOrEqual(2);
   });
 });
