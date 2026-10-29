@@ -12,6 +12,27 @@ describe("GameRuntime", () => {
     expect(runtime.save().character.id).toBe("runtime-hero");
   });
 
+  it("restores a saved runtime including position, inventory, equipment, and quest progress", () => {
+    const original = GameRuntime.create({ seed: 123, characterName: "Saved Hero", characterClass: "Ranger", characterId: "saved-hero" });
+    original.session.character.gold = 77;
+    original.session.character.takeDamage(4);
+    original.session.acceptQuest("meadow-first-steps");
+    original.move("east");
+    const snapshot = original.save();
+    const restored = GameRuntime.restore(snapshot);
+    expect(restored.session.character.name).toBe("Saved Hero");
+    expect(restored.session.character.gold).toBe(77);
+    expect(restored.session.position).toEqual(snapshot.position);
+    expect(restored.session.inventory.list()).toEqual(snapshot.inventory);
+    expect(restored.session.save().equipment).toEqual(snapshot.equipment);
+    expect(restored.session.quests.getProgress("meadow-first-steps")).toEqual(snapshot.quests.find(q => q.questId === "meadow-first-steps"));
+  });
+
+  it("rejects a save with an unsupported map ID", () => {
+    const runtime = GameRuntime.create({ seed: 123, characterName: "Saved Hero", characterClass: "Fighter", characterId: "saved-hero" });
+    expect(() => GameRuntime.restore({ ...runtime.save(), mapId: "unknown-region" })).toThrow(/starter region/);
+  });
+
   it("creates the same map for the same seed", () => {
     const options = { seed: 77, characterName: "A", characterClass: "Ranger" as const };
     const first = GameRuntime.create(options);
