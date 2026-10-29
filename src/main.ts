@@ -241,4 +241,5 @@ document.addEventListener("keydown", event => {
   else if (event.key === "Escape" && activeDialogue) { activeDialogue = undefined; render(); }
 });
 window.addEventListener("gamepadconnected", () => { log = "Gamepad connected. Use the D-pad or keyboard controls."; if (gameStarted) render(); });
-titleScreen();\nrequestAnimationFrame(pollGamepad);
+titleScreen();
+requestAnimationFrame(pollGamepad);
