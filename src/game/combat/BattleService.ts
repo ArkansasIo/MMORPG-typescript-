@@ -2,6 +2,7 @@ import type { Character } from "../character/Character";
 import { CombatEngine, type CombatAction, type CombatState } from "./CombatEngine";
 import type { GameSession, QuestRewardResult } from "../GameSession";
 import { getCreature } from "../data/Creatures";
+import { rollLoot, type ItemDrop } from "../data/LootTables";
 import type { Combatant } from "../types";
 
 export interface BattleResult {
@@ -9,6 +10,8 @@ export interface BattleResult {
   xpAwarded: number;
   goldAwarded: number;
   questRewards: QuestRewardResult[];
+  itemsAwarded: ItemDrop[];
+  unresolvedItemDrops: ItemDrop[];
 }
 
 export class BattleService {
@@ -18,6 +21,8 @@ export class BattleService {
   private xpAwarded = 0;
   private goldAwarded = 0;
   private questRewards: QuestRewardResult[] = [];
+  private itemsAwarded: ItemDrop[] = [];
+  private unresolvedItemDrops: ItemDrop[] = [];
 
   constructor(
     private readonly session: GameSession,
@@ -43,6 +48,8 @@ export class BattleService {
     this.xpAwarded = 0;
     this.goldAwarded = 0;
     this.questRewards = [];
+    this.itemsAwarded = [];
+    this.unresolvedItemDrops = [];
     this.state = this.engine.start(combatants, [player.id]);
     this.resolveEnemyTurns();
     return this.result();
@@ -96,6 +103,10 @@ export class BattleService {
       this.xpAwarded += creature.xpReward;
       this.goldAwarded += gold;
       this.questRewards.push(this.session.recordObjective("kill", creature.id));
+      for (const drop of rollLoot(creature.id, this.random)) {
+        if (this.session.grantRegisteredItem(drop.itemId, drop.quantity)) this.itemsAwarded.push(drop);
+        else this.unresolvedItemDrops.push(drop);
+      }
     }
   }
 
@@ -117,6 +128,6 @@ export class BattleService {
 
   private result(): BattleResult {
     if (!this.state) throw new Error("Battle has not started");
-    return { state: this.state, xpAwarded: this.xpAwarded, goldAwarded: this.goldAwarded, questRewards: [...this.questRewards] };
+    return { state: this.state, xpAwarded: this.xpAwarded, goldAwarded: this.goldAwarded, questRewards: [...this.questRewards], itemsAwarded: [...this.itemsAwarded], unresolvedItemDrops: [...this.unresolvedItemDrops] };
   }
 }
