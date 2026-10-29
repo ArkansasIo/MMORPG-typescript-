@@ -123,3 +123,11 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 - [Save codec module notes](docs/source/SaveCodec.ts.docs.md).
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
+
+### Starter game data
+
+- [Starter items and quest definitions](src/game/data/StarterContent.ts) — sample consumables, equipment, and quest objectives/rewards.
+- [Creature catalog](src/game/data/Creatures.ts) — initial slime, wolf, and skeleton combat stats and rewards.
+- [Creature catalog tests](src/game/__tests__/creatures.test.ts).
+
+Quest item rewards are granted only when their item definitions have been registered with the session. Unknown rewards or inventory-capacity failures are returned in `unresolvedItemRewards` so the game can surface them instead of silently losing them.
