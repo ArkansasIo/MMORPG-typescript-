@@ -23,9 +23,10 @@ export class QuestEngine {
     if (!["locked", "active", "completed"].includes(snapshot.status) || !snapshot.counts || typeof snapshot.counts !== "object") throw new Error("Quest progress snapshot is invalid");
     const counts: Record<string, number> = {};
     for (const objective of definition.objectives) {
-      const count = snapshot.counts[objective.id] ?? 0;
+      const hasCount = Object.prototype.hasOwnProperty.call(snapshot.counts, objective.id);
+      const count = hasCount ? snapshot.counts[objective.id] : 0;
       if (!Number.isInteger(count) || count < 0 || count > objective.required) throw new Error("Quest objective progress is invalid");
-      counts[objective.id] = count;
+      if (hasCount) counts[objective.id] = count;
     }
     if (Object.keys(snapshot.counts).some(id => !definition.objectives.some(objective => objective.id === id))) throw new Error("Save contains unknown quest objective progress");
     const allComplete = definition.objectives.every(objective => counts[objective.id] >= objective.required);
