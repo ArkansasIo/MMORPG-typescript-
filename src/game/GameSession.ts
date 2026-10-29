@@ -124,6 +124,19 @@ export class GameSession {
     return { completedQuestIds: completed.map(q => q.id), xpAwarded, goldAwarded, itemRewards, unresolvedItemRewards };
   }
 
+  restore(save: SessionSave): void {
+    if (save.schemaVersion !== 1 || save.mapId !== this.map.data.id) throw new Error("Save does not match this map or schema");
+    if (save.character.id !== this.character.id) throw new Error("Save character does not match this session");
+    if (!this.map.inBounds(save.position.x, save.position.y) || !this.collision.canEnter(save.position)) {
+      throw new Error("Saved position is outside the map or blocked");
+    }
+    const knownQuestIds = new Set(this.questIds);
+    if (save.quests.some(progress => !knownQuestIds.has(progress.questId))) throw new Error("Save contains an unknown quest");
+    this.inventory.restoreSnapshot(save.inventory, save.equipment, [...this.itemDefinitions.values()]);
+    this.quests.restoreProgress(save.quests);
+    this.currentPosition = { ...save.position };
+  }
+
   save(): SessionSave {
     return {
       schemaVersion: 1,
