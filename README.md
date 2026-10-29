@@ -136,3 +136,6 @@ Quest item rewards are granted only when their item definitions have been regist
 - [BattleService](src/game/combat/BattleService.ts) — connects combat encounters to character HP, creature XP/gold, and quest kill objectives.
 - [BattleService module notes](docs/source/BattleService.ts.docs.md).
 - [Battle integration tests](src/game/__tests__/battle-service.test.ts).
+- [GameRuntime](src/game/GameRuntime.ts) — composition factory for seeded region, character, starter inventory/quests, and battle service.
+- [GameRuntime module notes](docs/source/GameRuntime.ts.docs.md).
+- [GameRuntime tests](src/game/__tests__/game-runtime.test.ts).
