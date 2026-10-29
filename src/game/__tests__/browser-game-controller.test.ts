@@ -1,0 +1,43 @@
+import { describe, expect, it } from "vitest";
+import { BrowserGameController } from "../BrowserGameController";
+import type { SaveStorage } from "../persistence/SaveRepository";
+
+class MemoryStorage implements SaveStorage {
+  private readonly data = new Map<string, string>();
+  getItem(key: string): string | null { return this.data.get(key) ?? null; }
+  setItem(key: string, value: string): void { this.data.set(key, value); }
+  removeItem(key: string): void { this.data.delete(key); }
+}
+describe("BrowserGameController", () => {
+  it("starts, saves, and continues a game in a named slot", () => {
+    const storage = new MemoryStorage();
+    const controller = new BrowserGameController(storage);
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    controller.game.session.character.gold = 123;
+    controller.saveGame("slot-a");
+    expect(controller.hasSave("slot-a")).toBe(true);
+    const resumed = new BrowserGameController(storage);
+    resumed.continueGame("slot-a");
+    expect(resumed.game.session.character.name).toBe("Mira");
+    expect(resumed.game.session.character.gold).toBe(123);
+    expect(resumed.game.session.inventory.quantity("small-potion")).toBe(2);
+  });
+  it("uses an inventory potion and refuses to consume it at full health", () => {
+    const controller = new BrowserGameController(new MemoryStorage());
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    const hero = controller.game.session.character;
+    hero.takeDamage(10);
+    expect(controller.useItem("small-potion").success).toBe(true);
+    expect(controller.game.session.inventory.quantity("small-potion")).toBe(1);
+    hero.heal(999);
+    expect(controller.useItem("small-potion").success).toBe(false);
+    expect(controller.game.session.inventory.quantity("small-potion")).toBe(1);
+  });
+  it("connects NPC dialogue to available quest progression", () => {
+    const controller = new BrowserGameController(new MemoryStorage());
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    controller.game.session.recordObjective("visit", "meadow-marker");
+    const result = controller.chooseDialogue("meadow-elder", "greeting", "offer-help");
+    expect(result.questAccepted).toBe("slime-trouble");
+  });
+});
