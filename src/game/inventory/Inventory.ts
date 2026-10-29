@@ -19,6 +19,21 @@ export class Inventory {
  }
  remove(itemId:string,quantity=1):boolean {if(!Number.isInteger(quantity)||quantity<1||this.quantity(itemId)<quantity)return false;let left=quantity;this.stacks=this.stacks.flatMap(s=>{if(s.itemId!==itemId)return[s];const n=Math.min(left,s.quantity);left-=n;const remain=s.quantity-n;return remain?[{itemId,quantity:remain}]:[];});for(const [slot,id] of this.equipped)if(id===itemId&&this.quantity(id)===0)this.equipped.delete(slot);return true;}
  equip(item:ItemDefinition):boolean {if(!item.slot||this.quantity(item.id)<1)return false;this.equipped.set(item.slot,item.id);return true;}
+ restoreSnapshot(stacks: ItemStack[], equipment: Record<string, string>, definitions: ItemDefinition[]): void {
+  if (!Array.isArray(stacks) || !equipment || typeof equipment !== "object" || Array.isArray(equipment)) throw new Error("Inventory snapshot is invalid");
+  const catalog = new Map(definitions.map(item => [item.id, item]));
+  const next = new Inventory(this.capacity);
+  for (const stack of stacks) {
+    const item = catalog.get(stack.itemId);
+    if (!item || !Number.isInteger(stack.quantity) || stack.quantity < 1 || !next.add(item, stack.quantity)) throw new Error("Inventory snapshot contains an invalid item stack");
+  }
+  for (const [slot, itemId] of Object.entries(equipment)) {
+    const item = catalog.get(itemId);
+    if (!item || item.slot !== slot || !next.equip(item)) throw new Error("Inventory snapshot contains invalid equipment");
+  }
+  this.stacks = next.stacks.map(stack => ({ ...stack }));
+  this.equipped = new Map(next.equipped);
+ }
  equippedItems():Record<string,string>{return Object.fromEntries(this.equipped);}
 }
 export class ShopService {
