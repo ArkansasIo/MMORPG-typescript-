@@ -143,7 +143,7 @@ function render(): void {
     try {
       const reply = controller.beginDialogue("meadow-elder");
       if (!reply) { log = "The elder is not available."; render(); return; }
-      activeDialogue = { treeId: "meadow-elder", nodeId: reply.node.id, speaker: reply.node.speaker, text: reply.node.text, choices: reply.node.choices };
+      activeDialogue = { treeId: "meadow-elder", nodeId: reply.node.id, speaker: reply.node.speaker, text: reply.node.text, choices: reply.choices };
       render();
     } catch (error) { log = error instanceof Error ? error.message : "Dialogue failed."; render(); }
   };
@@ -175,7 +175,7 @@ function render(): void {
     if (!activeDialogue) return;
     const reply = controller.chooseDialogue(activeDialogue.treeId, activeDialogue.nodeId, button.dataset.dialogueChoice!);
     log = reply.message;
-    if (reply.dialogue) activeDialogue = { treeId: activeDialogue.treeId, nodeId: reply.dialogue.node.id, speaker: reply.dialogue.node.speaker, text: reply.dialogue.node.text, choices: reply.dialogue.node.choices };
+    if (reply.dialogue) activeDialogue = { treeId: activeDialogue.treeId, nodeId: reply.dialogue.node.id, speaker: reply.dialogue.node.speaker, text: reply.dialogue.node.text, choices: reply.dialogue.choices };
     else activeDialogue = undefined;
     render();
   });
