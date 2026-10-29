@@ -145,3 +145,4 @@ Quest item rewards are granted only when their item definitions have been regist
 - [Creature loot tables](src/game/data/LootTables.ts) — chance-based drops, quantity ranges, and deterministic test support.
 - [Loot table tests](src/game/__tests__/loot-tables.test.ts).
 - Creature victory rewards now include XP, gold, kill-quest progress, and registered item drops through [BattleService](src/game/combat/BattleService.ts).
+- [Loot table documentation](docs/source/LootTables.ts.docs.md) explains drop probabilities and unresolved item handling.
