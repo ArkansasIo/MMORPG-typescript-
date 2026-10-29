@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-EFFECT-SYSTEM-0001
  * @module-id ER-MOD-EFFECTS-0001
- * @doc ../../../../docs/source/EffectSystem.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/EffectSystem.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: timed buffs, debuffs, and status effect lifecycle.
  */
 import type { StatusEffect } from "../types";
