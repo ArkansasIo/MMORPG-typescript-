@@ -21,6 +21,7 @@ export class WorldGenerator {
     const waterChance = options.waterChance ?? 0.12;
     const forestChance = options.forestChance ?? 0.24;
     const mountainChance = options.mountainChance ?? 0.10;
+    if (waterChance + forestChance + mountainChance > 1) throw new Error("Terrain chances cannot sum to more than one");
     for (const chance of [waterChance, forestChance, mountainChance]) {
       if (!Number.isFinite(chance) || chance < 0 || chance > 1) {
         throw new Error("Terrain chances must be between zero and one");
