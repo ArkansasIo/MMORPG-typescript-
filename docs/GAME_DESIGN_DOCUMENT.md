@@ -87,3 +87,63 @@ These are broad tabletop-inspired archetypes; implement original class feature t
 
 ## Scope truth
 The current repository contains a basic local browser prototype, starter API and MySQL schema, cron scaffolding, and input support. The full Earth map, all content counts, completed audio library, title/loading/character creation flow, and actual online multiplayer are not complete yet. This document is the implementation plan, not a claim that all listed features already exist.
+
+## Story Campaign Expansion — Nine Realms
+
+### Premise
+A shattered celestial road once connected nine Norse-inspired realms. The World-Tree's star-forged roots are losing their light, and fragments of an ancient sky-forge have fallen across the realms. The player begins as a newly sworn Wayfarer and assembles allies, uncovers rival claims to the fragments, and decides how the realms will rebuild their shared path. This is original fantasy inspired by Norse cosmology; it is not a retelling of a specific game or saga.
+
+### Campaign scale
+- 12 acts, 50 chapters total.
+- Main-story quests: target 150 (3 per chapter on average).
+- Side quests: target 300 (regional stories, companion arcs, crafting, exploration, faction reputation).
+- Daily/weekly activities: optional rotating bounties, gathering requests, realm events, and challenge resets.
+- Instance targets: 42 trials, 18 raids, and 12 towers with 100 floors each. These are content targets, not all authored or implemented yet.
+- Every chapter should have an objective chain, named location, NPC/quest giver, encounter or puzzle, reward table, and a journal entry.
+
+### Twelve acts / fifty chapters
+1. **The Fallen Star** — Chapters 1–4: village tutorial, first rift, first companion, the damaged star-road.
+2. **Whispers in the Greenwood** — Chapters 5–8: living forests, missing scouts, beast clans, a trial gate.
+3. **The Frostbound March** — Chapters 9–12: frozen passes, survival hazards, a besieged hold, first realm guardian.
+4. **The Drowned Archive** — Chapters 13–16: coastal ruins, sunken lore, puzzle vaults, the first sky-forge fragment.
+5. **The Ember Mountains** — Chapters 17–20: dwarven foundries, volcanic routes, crafting mastery, a faction dispute.
+6. **The Realm of Storms** — Chapters 21–24: floating crags, thunder spirits, airship routes, a storm trial.
+7. **The Veil Beyond Stars** — Chapters 25–28: observatories, celestial navigation, alien wilderness, first outer-space zone.
+8. **The Hollow Moon** — Chapters 29–32: lunar ruins, low-gravity hazards, a lost expedition, moon-boss instance.
+9. **The War of Crowns** — Chapters 33–36: rival realm alliances, diplomacy, faction choices, large-scale battlefield instance.
+10. **The Root Below Time** — Chapters 37–40: ancient rootways, time anomalies, companion resolutions, a multi-wing dungeon.
+11. **The Black Constellation** — Chapters 41–45: corrupted star-road, coordinated realm objectives, raid preparation, guardian gauntlet.
+12. **The Ninefold Dawn** — Chapters 46–50: final realm convergence, multi-stage raid, choice-driven resolution, post-game unlocks.
+
+### Nine realms
+1. **Midgard Reach** — starting human lands, farms, roads, keeps, and towns.
+2. **Alfheim Glades** — luminous forests, fae courts, ancient groves.
+3. **Svartdeep Holds** — underground halls, forges, crystal mines.
+4. **Jotunheim Crown** — ice giants, glaciers, high mountain passes.
+5. **Muspelbrand** — volcanic wilderness, fire spirits, obsidian fortresses.
+6. **Vanaheim Wilds** — nature magic, wetlands, druidic settlements.
+7. **Niflheim Veil** — frozen mists, spectral ruins, dangerous visibility.
+8. **Hel's Threshold** — spirit roads and ancestral halls; keep the tone adventurous rather than graphic.
+9. **Astral Expanse** — star-temples, moon outposts, floating islands, celestial routes, and outer-space dungeons.
+
+### Quest-system design
+Quest categories: Main Story, Side Story, Companion, Realm, Faction, Daily, Weekly, Bounty, Crafting, Exploration, Dungeon, Trial, Raid, Tower, and Event.
+Each quest data record should contain: id, title, category, giverNpcId, realmId, prerequisites, objectives, objective counters, level range, party size, repeat policy, reset schedule, reward table, acceptance text, completion text, and failure/recovery behavior.
+Objectives should support: talk-to, defeat, collect, gather, craft, escort, investigate, discover-area, activate-object, survive-wave, complete-instance, and defeat-boss.
+Quest tracking must be event-driven and idempotent; repeated enemy-kill events must not duplicate rewards.
+
+### Instances and group content
+- A dungeon instance is a private party copy with entrance validation, checkpoint state, encounter seed, loot table, and completion record.
+- Trials are short mechanics-focused encounters with tiered difficulty and score/reward grades.
+- Raids use party roles, boss phases, telegraphs, enrage timers, revive rules, loot lockouts, and completion records.
+- Towers use floor templates, difficulty scaling, checkpoints, optional modifiers, floor bosses, and seasonal leaderboards.
+- The server, not the browser, validates instance membership, combat results, drops, and lockouts.
+
+### Seed and schedule rules
+- World seed determines reproducible procedural terrain and encounter variants, but authored story beats remain stable.
+- Instance seed is generated from a server-held key plus instance ID and content version; never trust a client-supplied seed for loot.
+- Scheduled resets should use UTC in production and store each reset result so retries are idempotent.
+- A multi-server deployment needs a distributed lock or one designated scheduler to prevent duplicate daily/weekly resets.
+
+### Current implementation boundary
+This is the design roadmap only. The existing repository does not yet contain all 50 chapters, 450+ authored quests, nine complete realms, or production-ready instances. These should be implemented as data-driven content in small, testable milestones.
