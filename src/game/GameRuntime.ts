@@ -22,6 +22,42 @@ export class GameRuntime {
     this.battles = battles;
   }
 
+  static restore(save: SessionSave): GameRuntime {
+    const match = /^starter-region-(-?\\d+)$/.exec(save.mapId);
+    if (!match) throw new Error("Save does not identify a restorable starter region");
+    const seed = Number(match[1]);
+    if (!Number.isSafeInteger(seed)) throw new Error("Saved world seed is invalid");
+    const data = save.character;
+    if (!Number.isInteger(data.level) || data.level < 1 ||
+        !Number.isFinite(data.xp) || data.xp < 0 ||
+        !Number.isFinite(data.hp) || !Number.isFinite(data.maxHp) ||
+        data.maxHp < 1 || data.hp < 0 || data.hp > data.maxHp ||
+        !Number.isSafeInteger(data.gold) || data.gold < 0) {
+      throw new Error("Saved character progression is invalid");
+    }
+    const character = new Character(data.name, data.characterClass, {
+      id: data.id,
+      abilities: data.abilities
+    });
+    character.level = data.level;
+    character.xp = data.xp;
+    character.hp = data.hp;
+    character.maxHp = data.maxHp;
+    character.gold = data.gold;
+    const map = new WorldGenerator().generate({
+      seed,
+      id: save.mapId,
+      name: "The Old World Frontier",
+      width: 25,
+      height: 17
+    });
+    const session = new GameSession(character, map, { x: Math.floor(map.width / 2), y: Math.floor(map.height / 2) });
+    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
+    for (const quest of STARTER_QUESTS) session.registerQuest(quest);
+    session.restore(save);
+    return new GameRuntime(session, new BattleService(session));
+  }
+
   static create(options: RuntimeOptions): GameRuntime {
     const character = new Character(options.characterName, options.characterClass, {
       id: options.characterId
