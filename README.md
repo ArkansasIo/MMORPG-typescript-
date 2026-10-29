@@ -87,3 +87,17 @@ Source modules use stable file and module IDs, documentation flags, sidecar expl
 ### Efficiency and implementation status
 
 The browser prototype still has a relatively large `src/main.ts` composition file. The documented refactor path is to split UI rendering, input, persistence, map generation, and combat orchestration into modules with clear ownership and tests. Avoid creating excessive tiny folders; add a submodule when it provides a meaningful boundary. Current code and documentation describe a prototype, not a production-ready MMORPG. Run `npm run build` locally or in CI to verify compilation; do not infer build success from a commit alone.
+
+## Engine source modules
+- [Game engine facade](src/game/GameEngine.ts)
+- [Character stats and progression](src/game/character/Character.ts)
+- [Turn-based combat engine](src/game/combat/CombatEngine.ts)
+- [Buffs, debuffs, and conditions](src/game/effects/EffectSystem.ts)
+- [Inventory, equipment, and shop transactions](src/game/inventory/Inventory.ts)
+- [Quest progression](src/game/quests/QuestEngine.ts)
+- [Tile maps and collision](src/game/world/TileMap.ts), [collision rules](src/game/world/CollisionSystem.ts)
+- [Image/audio asset catalog](src/game/assets/AssetCatalog.ts) — preserves media support; add actual media under `public/assets/` with license notes.
+- [MySQL schema](database/schema.sql) and [backend setup](server/README.md)
+
+### Start the backend
+From repository root, copy `.env.example` to `.env`, set your MySQL credentials, then initialize the schema with `mysql -u root -p < database/schema.sql`. In a separate terminal run `cd server && npm install && npm run dev`. The guest endpoint is a basic stored profile, not an authentication system. Online multiplayer, account authentication, and authoritative combat still require implementation.
