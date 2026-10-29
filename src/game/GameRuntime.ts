@@ -23,7 +23,7 @@ export class GameRuntime {
   }
 
   static restore(save: SessionSave): GameRuntime {
-    const match = /^starter-region-(-?\\d+)$/.exec(save.mapId);
+    const match = /^starter-region-(-?\d+)$/.exec(save.mapId);
     if (!match) throw new Error("Save does not identify a restorable starter region");
     const seed = Number(match[1]);
     if (!Number.isSafeInteger(seed)) throw new Error("Saved world seed is invalid");
