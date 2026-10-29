@@ -11,3 +11,6 @@
 - [CraftingService.ts](./CraftingService.ts) — validates recipes and crafts from inventory materials.
 - [Recipes.ts](../data/Recipes.ts) — starter recipes.
 - [CraftingService docs](../../../docs/source/CraftingService.ts.docs.md) — public API and boundaries.
+
+## Shop transactions
+The [Inventory.ts](./Inventory.ts) module also provides ShopService for atomic buy/sell checks. Browser-facing operations are exposed by BrowserGameController and surfaced in the Shop tab.
