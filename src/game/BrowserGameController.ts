@@ -2,6 +2,7 @@ import { GameRuntime, type RuntimeOptions } from "./GameRuntime";
 import { ConsumableService } from "./inventory/ConsumableService";
 import { CraftingService, type CraftResult, type CraftingRecipe } from "./inventory/CraftingService";
 import { STARTER_ITEMS } from "./data/StarterContent";
+import type { ItemDefinition } from "./inventory/Inventory";
 import { STARTER_RECIPES } from "./data/Recipes";
 import { STARTER_CONSUMABLES } from "./data/Consumables";
 import { InteractionService } from "./interactions/InteractionService";
@@ -56,6 +57,11 @@ export class BrowserGameController {
   useItem(itemId: string): ConsumableResult {
     return this.consumables.use(itemId, this.game.session.inventory, this.game.session.character);
   }
+
+  listShopItems(): ItemDefinition[] { return STARTER_ITEMS.map(item => ({ ...item })); }
+
+  buyItem(itemId: string, quantity = 1): boolean { return this.game.session.buyItem(itemId, quantity); }
+  sellItem(itemId: string, quantity = 1): boolean { return this.game.session.sellItem(itemId, quantity); }
 
   listRecipes(): CraftingRecipe[] { return this.crafting.listRecipes(); }
 
