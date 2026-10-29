@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { Character } from "../character/Character";
 import { GameSession } from "../GameSession";
 import { TileMap } from "../world/TileMap";
+import { STARTER_ITEMS, STARTER_QUESTS } from "../data/StarterContent";
 
 function makeMap(): TileMap {
   return new TileMap({
@@ -27,6 +28,7 @@ describe("Integrated game session", () => {
   it("awards quest XP and gold once when movement completes an objective", () => {
     const character = new Character("Hero", "Fighter", { id: "hero" });
     const session = new GameSession(character, makeMap(), { x: 0, y: 0 });
+    session.registerItemDefinition(STARTER_ITEMS[0]);
     session.registerQuest({
       id: "visit-town", title: "Visit Town", description: "Walk into the town.",
       prerequisites: [],
@@ -36,6 +38,7 @@ describe("Integrated game session", () => {
     expect(session.move("east")).toBe(true);
     expect(session.quests.getProgress("visit-town").status).toBe("completed");
     expect(character.gold).toBe(7);
+    expect(session.inventory.quantity("small-potion")).toBe(0);
     expect(session.recordObjective("visit", "starter:1,0").completedQuestIds).toEqual([]);
     expect(character.gold).toBe(7);
   });
@@ -55,5 +58,17 @@ describe("Integrated game session", () => {
       tiles: [{ kind: "wall", blocked: true }], exits: [], npcs: []
     });
     expect(() => new GameSession(new Character("Hero", "Fighter"), map, { x: 0, y: 0 })).toThrow("blocked");
+  });
+
+  it("registers the starter content and grants item rewards", () => {
+    const character = new Character("Hero", "Fighter", { id: "hero-starter" });
+    const session = new GameSession(character, makeMap(), { x: 0, y: 0 });
+    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
+    for (const quest of STARTER_QUESTS) session.registerQuest(quest);
+    expect(session.acceptQuest("meadow-first-steps")).toBe(true);
+    const result = session.recordObjective("visit", "meadow-marker");
+    expect(result.completedQuestIds).toContain("meadow-first-steps");
+    expect(result.itemRewards).toEqual(["small-potion"]);
+    expect(session.inventory.quantity("small-potion")).toBe(1);
   });
 });
