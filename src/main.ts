@@ -197,6 +197,42 @@ function startEncounter(): void {
   render();
 }
 
+let lastPadMove = 0;
+let lastPadAction = false;
+function pollGamepad(timestamp: number): void {
+  if (gameStarted && "getGamepads" in navigator) {
+    const pad = Array.from(navigator.getGamepads()).find((entry): entry is Gamepad => entry !== null);
+    if (pad) {
+      let direction: Direction | undefined;
+      const x = pad.axes[0] ?? 0, y = pad.axes[1] ?? 0;
+      if (timestamp - lastPadMove > 200) {
+        if (y < -0.65 || pad.buttons[12]?.pressed) direction = "north";
+        else if (y > 0.65 || pad.buttons[13]?.pressed) direction = "south";
+        else if (x < -0.65 || pad.buttons[14]?.pressed) direction = "west";
+        else if (x > 0.65 || pad.buttons[15]?.pressed) direction = "east";
+        if (direction) { move(direction); lastPadMove = timestamp; }
+      }
+      const actionPressed = !!pad.buttons[0]?.pressed;
+      if (actionPressed && !lastPadAction) {
+        const state = controller.game.battles.currentBattle;
+        if (state?.status === "active") {
+          const target = state.combatants.find(entry => !state.playerSideIds.includes(entry.id) && entry.hp > 0);
+          if (target) {
+            try {
+              const result = controller.game.act({ kind: "attack", targetId: target.id });
+              battleMessage = result.state.events.at(-1)?.message ?? "Attack resolved.";
+              log = result.state.status === "victory" ? `Victory! Gained ${result.xpAwarded} XP and ${result.goldAwarded} gold.` : battleMessage;
+            } catch (error) { log = error instanceof Error ? error.message : "Attack failed."; }
+            render();
+          }
+        } else startEncounter();
+      }
+      lastPadAction = actionPressed;
+    } else lastPadAction = false;
+  }
+  requestAnimationFrame(pollGamepad);
+}
+
 document.addEventListener("keydown", event => {
   if (!gameStarted || event.altKey || event.ctrlKey || event.metaKey) return;
   const directions: Record<string, Direction> = { ArrowUp: "north", w: "north", W: "north", ArrowDown: "south", s: "south", S: "south", ArrowLeft: "west", a: "west", A: "west", ArrowRight: "east", d: "east", D: "east" };
@@ -205,4 +241,4 @@ document.addEventListener("keydown", event => {
   else if (event.key === "Escape" && activeDialogue) { activeDialogue = undefined; render(); }
 });
 window.addEventListener("gamepadconnected", () => { log = "Gamepad connected. Use the D-pad or keyboard controls."; if (gameStarted) render(); });
-titleScreen();
+titleScreen();\nrequestAnimationFrame(pollGamepad);
