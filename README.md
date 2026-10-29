@@ -133,3 +133,6 @@ These systems are early prototype foundations. The save codec does not authentic
 Quest item rewards are granted only when their item definitions have been registered with the session. Unknown rewards or inventory-capacity failures are returned in `unresolvedItemRewards` so the game can surface them instead of silently losing them.
 - [Weighted encounter tables](src/game/data/EncounterTables.ts) — starter meadow and old-road creature selection with injectable randomness.
 - [Encounter selection tests](src/game/__tests__/encounters.test.ts).
+- [BattleService](src/game/combat/BattleService.ts) — connects combat encounters to character HP, creature XP/gold, and quest kill objectives.
+- [BattleService module notes](docs/source/BattleService.ts.docs.md).
+- [Battle integration tests](src/game/__tests__/battle-service.test.ts).
