@@ -14,6 +14,30 @@ export class QuestEngine {
  register(quest:QuestDefinition):void {if(this.definitions.has(quest.id))throw new Error(`Duplicate quest: ${quest.id}`);if(!quest.objectives.length||quest.objectives.some(o=>o.required<1))throw new Error("Quest objectives need positive requirements");this.definitions.set(quest.id,structuredClone(quest));this.progress.set(quest.id,{questId:quest.id,status:quest.prerequisites.length?"locked":"active",counts:{}});}
  accept(questId:string):boolean {const q=this.require(questId),p=this.progress.get(questId)!;if(p.status!=="locked"||!q.prerequisites.every(id=>this.progress.get(id)?.status==="completed"))return false;p.status="active";return true;}
  record(kind:ObjectiveKind,targetId:string,amount=1):QuestDefinition[] {if(!Number.isInteger(amount)||amount<1)throw new Error("Progress amount must be positive");const completed:QuestDefinition[]=[];for(const q of this.definitions.values()){const p=this.progress.get(q.id)!;if(p.status!=="active")continue;for(const o of q.objectives)if(o.kind===kind&&o.targetId===targetId)p.counts[o.id]=Math.min(o.required,(p.counts[o.id]??0)+amount);if(q.objectives.every(o=>(p.counts[o.id]??0)>=o.required)){p.status="completed";completed.push(structuredClone(q));}}return completed;}
+ restoreProgress(snapshots: QuestProgress[]): void {
+  if (!Array.isArray(snapshots)) throw new Error("Quest snapshots must be an array");
+  const pending = new Map<string, QuestProgress>();
+  for (const snapshot of snapshots) {
+    const definition = this.definitions.get(snapshot.questId);
+    if (!definition || pending.has(snapshot.questId)) throw new Error("Save contains an unknown or duplicate quest");
+    if (!["locked", "active", "completed"].includes(snapshot.status) || !snapshot.counts || typeof snapshot.counts !== "object") throw new Error("Quest progress snapshot is invalid");
+    const counts: Record<string, number> = {};
+    for (const objective of definition.objectives) {
+      const count = snapshot.counts[objective.id] ?? 0;
+      if (!Number.isInteger(count) || count < 0 || count > objective.required) throw new Error("Quest objective progress is invalid");
+      counts[objective.id] = count;
+    }
+    if (Object.keys(snapshot.counts).some(id => !definition.objectives.some(objective => objective.id === id))) throw new Error("Save contains unknown quest objective progress");
+    const allComplete = definition.objectives.every(objective => counts[objective.id] >= objective.required);
+    if ((snapshot.status === "completed") !== allComplete) throw new Error("Quest status does not match objective progress");
+    pending.set(snapshot.questId, { questId: snapshot.questId, status: snapshot.status, counts });
+  }
+  for (const [id, current] of this.progress) {
+    const restored = pending.get(id);
+    if (restored) this.progress.set(id, structuredClone(restored));
+    else this.progress.set(id, { questId: id, status: this.definitions.get(id)!.prerequisites.length ? "locked" : "active", counts: {} });
+  }
+ }
  getProgress(questId:string):QuestProgress{return structuredClone(this.progress.get(questId)??{questId,status:"locked",counts:{}});}
  private require(id:string):QuestDefinition {const q=this.definitions.get(id);if(!q)throw new Error(`Unknown quest: ${id}`);return q;}
 }
