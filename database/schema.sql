@@ -1,0 +1,46 @@
+-- @file-id ER-FILE-DB-SCHEMA-0001
+-- @module-id ER-MOD-DATABASE-0001
+-- @doc ../docs/source/schema.sql.docs.md
+-- @master-doc ../docs/MASTER_DOCUMENTATION.md
+-- Purpose: baseline persistent schema for the Earthbound Realms prototype.
+CREATE DATABASE IF NOT EXISTS earthbound_realms CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE earthbound_realms;
+CREATE TABLE IF NOT EXISTS players (
+ id CHAR(36) PRIMARY KEY,
+ display_name VARCHAR(24) NOT NULL,
+ character_class VARCHAR(24) NOT NULL DEFAULT 'Fighter',
+ level INT UNSIGNED NOT NULL DEFAULT 1,
+ xp BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ gold BIGINT UNSIGNED NOT NULL DEFAULT 0,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ INDEX idx_players_display_name(display_name)
+);
+CREATE TABLE IF NOT EXISTS world_seeds (
+ seed_key VARCHAR(64) PRIMARY KEY,
+ seed_value BIGINT NOT NULL,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS player_quests (
+ player_id CHAR(36) NOT NULL,
+ quest_id VARCHAR(100) NOT NULL,
+ status ENUM('locked','active','completed') NOT NULL DEFAULT 'active',
+ progress JSON NOT NULL,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ PRIMARY KEY(player_id,quest_id),
+ CONSTRAINT fk_player_quests_player FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS player_saves (
+ player_id CHAR(36) PRIMARY KEY,
+ save_version INT UNSIGNED NOT NULL DEFAULT 1,
+ save_data JSON NOT NULL,
+ updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+ CONSTRAINT fk_player_saves_player FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
+);
+CREATE TABLE IF NOT EXISTS world_regions (
+ region_id VARCHAR(120) PRIMARY KEY,
+ seed_value BIGINT NOT NULL,
+ region_data JSON NOT NULL,
+ schema_version INT UNSIGNED NOT NULL DEFAULT 1,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
