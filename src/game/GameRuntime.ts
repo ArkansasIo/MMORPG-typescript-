@@ -1,6 +1,6 @@
 import { Character } from "./character/Character";
 import { BattleService, type BattleResult } from "./combat/BattleService";
-import { CombatAction } from "./combat/CombatEngine";
+import type { CombatAction } from "./combat/CombatEngine";
 import { STARTER_ITEMS, STARTER_QUESTS } from "./data/StarterContent";
 import { GameSession, type SessionSave } from "./GameSession";
 import { WorldGenerator } from "./world/WorldGenerator";
