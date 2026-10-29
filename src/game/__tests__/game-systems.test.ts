@@ -74,3 +74,68 @@ describe("Quest progression", () => {
     expect(quests.getProgress("second").status).toBe("completed");
   });
 });
+
+import { Inventory, ShopService, type ItemDefinition } from "../inventory/Inventory";
+import { EffectSystem } from "../effects/EffectSystem";
+
+const potion: ItemDefinition = {
+  id: "potion", name: "Small Potion", kind: "consumable", stackable: true,
+  maxStack: 5, price: 10, description: "Restores a little health."
+};
+const sword: ItemDefinition = {
+  id: "sword", name: "Iron Sword", kind: "weapon", stackable: false,
+  maxStack: 1, price: 40, description: "A basic sword.", slot: "weapon", statBonus: 2
+};
+
+describe("Inventory and shop transactions", () => {
+  it("adds stacks and refuses capacity overflow without partial mutation", () => {
+    const inventory = new Inventory(1);
+    expect(inventory.add(potion, 4)).toBe(true);
+    expect(inventory.add(sword)).toBe(false);
+    expect(inventory.list()).toEqual([{ itemId: "potion", quantity: 4 }]);
+  });
+
+  it("does not charge for a purchase that cannot fit", () => {
+    const inventory = new Inventory(1);
+    inventory.add(sword);
+    const wallet = { gold: 100 };
+    expect(new ShopService().buy(inventory, potion, 1, wallet)).toBe(false);
+    expect(wallet.gold).toBe(100);
+    expect(inventory.quantity("potion")).toBe(0);
+  });
+
+  it("charges and credits only successful buy/sell transactions", () => {
+    const inventory = new Inventory(3);
+    const shop = new ShopService();
+    const wallet = { gold: 100 };
+    expect(shop.buy(inventory, potion, 2, wallet)).toBe(true);
+    expect(wallet.gold).toBe(80);
+    expect(shop.sell(inventory, potion, 1, wallet, 0.5)).toBe(true);
+    expect(wallet.gold).toBe(85);
+    expect(inventory.quantity("potion")).toBe(1);
+  });
+});
+
+describe("Timed effects", () => {
+  it("expires effects after their configured number of target turns", () => {
+    const effects = new EffectSystem();
+    effects.apply({
+      id: "might", name: "Might", targetId: "hero", kind: "buff",
+      stat: "attack", amount: 3, remainingTurns: 2, stacking: "refresh"
+    });
+    expect(effects.statBonus("hero", "attack")).toBe(3);
+    expect(effects.advanceTurn("hero")).toHaveLength(0);
+    expect(effects.advanceTurn("hero")).toHaveLength(1);
+    expect(effects.statBonus("hero", "attack")).toBe(0);
+  });
+
+  it("refreshes matching effects instead of duplicating them", () => {
+    const effects = new EffectSystem();
+    const base = { id: "shield", name: "Shield", targetId: "hero", kind: "buff" as const, stat: "defense" as const, amount: 2, remainingTurns: 1, stacking: "refresh" as const };
+    effects.apply(base);
+    effects.apply({ ...base, amount: 4, remainingTurns: 3 });
+    expect(effects.forTarget("hero")).toHaveLength(1);
+    expect(effects.statBonus("hero", "defense")).toBe(4);
+    expect(effects.forTarget("hero")[0].remainingTurns).toBe(3);
+  });
+});
