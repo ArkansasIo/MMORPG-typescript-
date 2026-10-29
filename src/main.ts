@@ -1,3 +1,11 @@
+/**
+ * @file-id ER-FILE-CLIENT-ENTRY-0001
+ * @module-id ER-MOD-CLIENT-0001
+ * @doc ../docs/source/main.ts.docs.md
+ * @master-doc ../docs/MASTER_DOCUMENTATION.md
+ * @purpose Browser entry point and prototype UI/input coordinator.
+ * @notes Keep this file as the composition root; move domain rules into src/game modules.
+ */
 type Cell = "grass" | "forest" | "water" | "mountain" | "town";
 type Creature = { name: string; hp: number; maxHp: number; attack: number; xp: number };
 const app = document.querySelector<HTMLDivElement>("#app")!;
