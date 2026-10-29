@@ -124,6 +124,17 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
 
+### Runtime save restoration and browser controller
+
+- [Game runtime restoration](src/game/GameRuntime.ts) — reconstructs the starter world and restores validated character state from a save snapshot.
+- [Session restore](src/game/GameSession.ts) — restores legal position, inventory, equipment, and registered quest progress.
+- [Inventory snapshot restore](src/game/inventory/Inventory.ts) and [quest progress restore](src/game/quests/QuestEngine.ts).
+- [Browser game controller](src/game/BrowserGameController.ts) — UI-facing facade for new/continue game, save slots, movement, consumables, and dialogue.
+- [Controller tests](src/game/__tests__/browser-game-controller.test.ts) and [runtime restore tests](src/game/__tests__/game-runtime.test.ts).
+- [Controller documentation](docs/source/BrowserGameController.ts.docs.md).
+
+These modules provide a tested integration boundary. The existing `src/main.ts` prototype still has its own state and must be migrated to the controller before these flows become the live UI behavior.
+
 ### Consumable items
 
 - [Consumable service](src/game/inventory/ConsumableService.ts) — validates inventory ownership, applies healing, and consumes one item transactionally.
