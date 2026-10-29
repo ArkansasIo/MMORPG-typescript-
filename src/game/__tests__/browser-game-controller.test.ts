@@ -41,3 +41,13 @@ describe("BrowserGameController", () => {
     expect(result.questAccepted).toBe("slime-trouble");
   });
 });
+
+  it("crafts a recipe from starter materials through the browser controller", () => {
+    const controller = new BrowserGameController(new MemoryStorage());
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    expect(controller.canCraft("small-potion-herbal")).toBe(true);
+    const result = controller.craftItem("small-potion-herbal");
+    expect(result.success).toBe(true);
+    expect(controller.game.session.inventory.quantity("healing-herb")).toBe(2);
+    expect(controller.game.session.inventory.quantity("small-potion")).toBe(3);
+  });
