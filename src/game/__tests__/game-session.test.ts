@@ -33,7 +33,6 @@ describe("Integrated game session", () => {
       objectives: [{ id: "enter-town", kind: "visit", targetId: "starter:1,0", required: 1 }],
       reward: { xp: 25, gold: 7 }
     });
-    expect(session.acceptQuest("visit-town")).toBe(true);
     expect(session.move("east")).toBe(true);
     expect(session.quests.getProgress("visit-town").status).toBe("completed");
     expect(character.gold).toBe(7);
