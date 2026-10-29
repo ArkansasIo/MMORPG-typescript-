@@ -2,6 +2,7 @@ import { Character } from "./character/Character";
 import { BattleService, type BattleResult } from "./combat/BattleService";
 import type { CombatAction } from "./combat/CombatEngine";
 import { STARTER_ITEMS, STARTER_QUESTS } from "./data/StarterContent";
+import { rollEncounter } from "./data/EncounterTables";
 import { GameSession, type SessionSave } from "./GameSession";
 import { WorldGenerator } from "./world/WorldGenerator";
 
@@ -37,6 +38,8 @@ export class GameRuntime {
     for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
     for (const quest of STARTER_QUESTS) session.registerQuest(quest);
     session.addItem(STARTER_ITEMS[0], 2);
+    session.addItem(STARTER_ITEMS[1]);
+    session.equipItem("iron-sword");
     return new GameRuntime(session, new BattleService(session));
   }
 
@@ -46,6 +49,10 @@ export class GameRuntime {
 
   startEncounter(creatureIds: string[] = ["slime"]): BattleResult {
     return this.battles.start(creatureIds);
+  }
+
+  startRandomEncounter(tableId = "meadow"): BattleResult {
+    return this.battles.start([rollEncounter(tableId).id]);
   }
 
   act(action: CombatAction): BattleResult {
