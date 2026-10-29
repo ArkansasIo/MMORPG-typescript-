@@ -51,3 +51,17 @@ describe("BrowserGameController", () => {
     expect(controller.game.session.inventory.quantity("healing-herb")).toBe(2);
     expect(controller.game.session.inventory.quantity("small-potion")).toBe(3);
   });
+
+  it("supports shop purchases and sales through the browser controller", () => {
+    const controller = new BrowserGameController(new MemoryStorage());
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    const hero = controller.game.session.character;
+    const startingGold = hero.gold;
+    expect(controller.buyItem("healing-herb", 2)).toBe(true);
+    expect(hero.gold).toBe(startingGold - 8);
+    expect(controller.game.session.inventory.quantity("healing-herb")).toBe(6);
+    expect(controller.sellItem("healing-herb", 2)).toBe(true);
+    expect(hero.gold).toBe(startingGold - 4);
+    expect(controller.game.session.inventory.quantity("healing-herb")).toBe(4);
+    expect(controller.buyItem("iron-sword", 1)).toBe(false);
+  });
