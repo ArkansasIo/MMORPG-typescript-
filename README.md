@@ -10,12 +10,16 @@ Earthbound Realms is an original retro fantasy RPG prototype combining classic m
 ## Included now
 - TypeScript + Vite browser client with a retro-fantasy panel interface.
 - Title screen with New Game, Continue, Play Offline, Play Online, Settings, and Credits entries.
-- Basic character-name/class selection, loading overlay, and local browser save flow.
-- Seeded procedural demonstration region with tile movement and terrain blocking.
-- Keyboard (WASD/arrows), mouse, and browser Gamepad API input where supported.
-- Basic encounter/attack loop, HP, XP, leveling, and gold.
+- Character name/class/seed setup, named local save slot, and continue-from-save flow powered by the game runtime.
+- Seeded procedural tile region rendered from the game runtime, with collision-aware movement and zoom.
+- Keyboard (WASD/arrows), mouse tile clicks, on-screen directional pad, and browser Gamepad API movement/action input where supported.
+- Runtime-backed encounters, turn-based combat, HP, XP, leveling, gold, equipment bonuses, consumables, quests, and NPC dialogue.
 - Express API starter, MySQL schema, environment template, and cron-job scaffolding.
 - Design documents for game systems, modes, story campaign, realms, and architecture/UML.
+
+
+### Browser UI integration status
+The current `src/main.ts` delegates state to `BrowserGameController` and `GameRuntime`. The Character, Inventory, Quests, World Map, and Codex tabs read from runtime state; potion use, quest progression, NPC dialogue choices, battle actions, movement, and save/continue use domain services. The browser stores the local save in the `earthbound-realms:save:main` slot. This is still a single-player prototype: multiplayer authentication, server-authoritative state, and online shared worlds are not implemented.
 
 ## Planned design targets
 - Nine character classes and D20-inspired checks, attacks, saving throws, and conditions.
