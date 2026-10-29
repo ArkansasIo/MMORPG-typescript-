@@ -124,6 +124,16 @@ From repository root, copy `.env.example` to `.env`, set your MySQL credentials,
 
 These systems are early prototype foundations. The save codec does not authenticate save data, item reward IDs still need a data-driven item resolver, and the world generator does not produce real-world geography or settlements yet.
 
+### Save slots and game interactions
+
+- [Save repository](src/game/persistence/SaveRepository.ts) — namespaced save slots, payload-size limits, and codec validation.
+- [Save repository tests](src/game/__tests__/save-repository.test.ts).
+- [Save repository notes](docs/source/SaveRepository.ts.docs.md).
+- [Interaction service](src/game/interactions/InteractionService.ts) — connects dialogue choices to quest acceptance.
+- [Interaction tests](src/game/__tests__/interaction-service.test.ts).
+
+These modules are tested independently. Save snapshots are not yet restored into a live runtime, and browser UI integration remains a separate step.
+
 ### NPC dialogue
 
 - [Dialogue engine](src/game/dialogue/DialogueEngine.ts) — validated, branching conversation trees.
