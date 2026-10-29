@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-CHARACTER-CORE-0001
  * @module-id ER-MOD-CHARACTER-0001
- * @doc ../../../../docs/source/Character.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/Character.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: object-oriented player and creature stat model.
  */
 import type { AbilityScores, CharacterClass, Combatant, DamageType, StatusEffect } from "../types";
