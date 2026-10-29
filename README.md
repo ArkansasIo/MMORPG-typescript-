@@ -68,6 +68,11 @@ The health endpoint is http://localhost:3001/api/health. Configure `MYSQL_USER`,
 - `docs/GAME_DESIGN_DOCUMENT.md` — design pillars, classes, combat rules, campaign, nine realms, quests, instances, audio, assets, and milestones.
 - `docs/MULTIPLAYER_AND_MODES.md` — title/loading flow and single-player/offline/online/multiplayer architecture.
 - `docs/ARCHITECTURE_AND_UML.md` — Mermaid system context, class diagram, online join sequence, and database ER model.
+- `docs/TECH_STACK.md` — language roles, API boundary, and recommended client/server stack.
+- `docs/CONTROLS.md` — keyboard, mouse, and browser gamepad mappings.
+- `docs/ASSET_AUDIO_PIPELINE.md` — original pixel-art and 8-bit audio pipeline plan.
+- `docs/TEST_PLAN.md` — prototype smoke tests and release gates.
+- `.github/workflows/ci.yml` — GitHub Actions build/type-check jobs for client and API.
 - `docs/CONTROLS.md` — input mapping and browser Gamepad API limitations.
 - `database/schema.sql` — MySQL schema.
 - `.env.example` — configuration template.
