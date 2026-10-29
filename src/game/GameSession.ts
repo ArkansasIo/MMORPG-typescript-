@@ -1,5 +1,5 @@
 import { Character } from "./character/Character";
-import { Inventory, type ItemDefinition } from "./inventory/Inventory";
+import { Inventory, ShopService, type ItemDefinition } from "./inventory/Inventory";
 import { QuestEngine, type ObjectiveKind, type QuestDefinition } from "./quests/QuestEngine";
 import { CollisionSystem, type Direction, type Position } from "./world/CollisionSystem";
 import { TileMap } from "./world/TileMap";
@@ -25,6 +25,7 @@ export class GameSession {
   readonly quests = new QuestEngine();
   private readonly questIds = new Set<string>();
   private readonly itemDefinitions = new Map<string, ItemDefinition>();
+  private readonly shop = new ShopService();
   private readonly collision: CollisionSystem;
   private currentPosition: Position;
 
@@ -55,6 +56,35 @@ export class GameSession {
   }
   acceptQuest(id: string): boolean { return this.quests.accept(id); }
   addItem(item: ItemDefinition, quantity = 1): boolean { return this.inventory.add(item, quantity); }
+
+  equipItem(itemId: string): boolean {
+    const item = this.itemDefinitions.get(itemId);
+    return !!item && this.inventory.equip(item);
+  }
+
+  equipmentBonuses(): { attackBonus: number; defense: number } {
+    const equipped = this.inventory.equippedItems();
+    let attackBonus = 0;
+    let defense = 0;
+    for (const [slot, itemId] of Object.entries(equipped)) {
+      const item = this.itemDefinitions.get(itemId);
+      if (!item) continue;
+      const bonus = Number.isFinite(item.statBonus) ? Math.max(0, item.statBonus ?? 0) : 0;
+      if (slot === "weapon") attackBonus += bonus;
+      else defense += bonus;
+    }
+    return { attackBonus, defense };
+  }
+
+  buyItem(itemId: string, quantity = 1): boolean {
+    const item = this.itemDefinitions.get(itemId);
+    return !!item && this.shop.buy(this.inventory, item, quantity, this.character);
+  }
+
+  sellItem(itemId: string, quantity = 1, rate = 0.5): boolean {
+    const item = this.itemDefinitions.get(itemId);
+    return !!item && this.shop.sell(this.inventory, item, quantity, this.character, rate);
+  }
 
   registerItemDefinition(item: ItemDefinition): void {
     if (!item.id.trim()) throw new Error("Item definition requires an ID");
