@@ -1,8 +1,8 @@
 /**
  * @file-id ER-FILE-QUEST-ENGINE-0001
  * @module-id ER-MOD-QUESTS-0001
- * @doc ../../../../docs/source/QuestEngine.ts.docs.md
- * @master-doc ../../../../docs/MASTER_DOCUMENTATION.md
+ * @doc ../../../docs/source/QuestEngine.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Purpose: quest prerequisites, objective progress, and rewards.
  */
 export type ObjectiveKind="kill"|"collect"|"talk"|"visit";
