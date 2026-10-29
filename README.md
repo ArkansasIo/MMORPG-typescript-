@@ -33,10 +33,16 @@ These are targets, not completed content. The current map is schematic and is no
 - npm
 - MySQL 8 or later for API/database features
 
+## Verify the project
+
+Run `npm test` to execute the Vitest unit tests for character progression, combat, and quest prerequisites. Run `npm run build` to type-check and build the browser client. GitHub Actions runs these checks and separately type-checks the API server.
+
 ## Run the browser client
 At the repository root:
 ```bash
 npm install
+npm test
+npm run build
 npm run dev
 ```
 Open the Vite URL shown in the terminal (normally http://localhost:5173). The client can run independently of MySQL for local prototype play.
