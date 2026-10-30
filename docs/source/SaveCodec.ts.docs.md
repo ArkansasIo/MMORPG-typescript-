@@ -10,4 +10,4 @@
 
 ## Important limitations
 
-Validation is a structural integrity check, not authentication or anti-cheat protection. A client can alter its own save before submitting it. Production online play must validate authoritative player state on the server and use a migration strategy when save schemas change. Version 1 snapshots do not yet contain item definitions or the full world-map data; they store inventory item IDs and the active map ID.
+Validation is a structural integrity check, not authentication or anti-cheat protection. A client can alter its own save before submitting it. Production online play must validate authoritative player state on the server and use a migration strategy when save schemas change. Version 1 snapshots can optionally include an authored Tiled world catalog: map IDs/names, source Tiled documents, and opened-door IDs. The decoder structurally validates this optional catalog; `GameRuntime.restore` then reparses maps and validates active map and door references. Procedural saves remain compact and do not embed generated map data.
