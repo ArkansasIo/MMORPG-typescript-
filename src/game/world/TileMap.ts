@@ -16,10 +16,11 @@ export class TileMap {
   if(data.schemaVersion!==1)throw new Error("Unsupported tile map schema version");
   if(!data.id.trim()||!data.name.trim())throw new Error("Map id and name are required");
   if(!Number.isInteger(data.width)||!Number.isInteger(data.height)||data.width<1||data.height<1)throw new Error("Map dimensions must be positive integers");
-  if(data.tiles.length!==data.width*data.height)throw new Error("Tile count must equal width × height");
-  for(const exit of data.exits)if(!this.inBounds(exit.x,exit.y)||!exit.targetMapId.trim())throw new Error(`Invalid map exit: ${exit.id}`);
-  for(const npc of data.npcs)if(!this.inBounds(npc.x,npc.y)||!npc.id.trim()||!npc.dialogueId.trim())throw new Error(`Invalid NPC spawn: ${npc.id}`);
+  if(!Array.isArray(data.tiles)||data.tiles.length!==data.width*data.height)throw new Error("Tile count must equal width × height");
+  if(!Array.isArray(data.exits)||!Array.isArray(data.npcs))throw new Error("Map exits and NPCs must be arrays");
   this.data=structuredClone(data);
+  for(const exit of this.data.exits)if(!this.inBounds(exit.x,exit.y)||!exit.targetMapId.trim())throw new Error(`Invalid map exit: ${exit.id}`);
+  for(const npc of this.data.npcs)if(!this.inBounds(npc.x,npc.y)||!npc.id.trim()||!npc.dialogueId.trim())throw new Error(`Invalid NPC spawn: ${npc.id}`);
  }
  get width():number{return this.data.width;}
  get height():number{return this.data.height;}
