@@ -27,18 +27,33 @@ export class GameSession {
   private readonly questIds = new Set<string>();
   private readonly itemDefinitions = new Map<string, ItemDefinition>();
   private readonly shop = new ShopService();
-  private readonly collision: CollisionSystem;
+  private collision: CollisionSystem;
+  private currentMap: TileMap;
   private currentPosition: Position;
 
-  constructor(readonly character: Character, readonly map: TileMap, spawn: Position, capacity = 30) {
+  constructor(readonly character: Character, map: TileMap, spawn: Position, capacity = 30) {
     if (!map.inBounds(spawn.x, spawn.y)) throw new Error("Spawn is outside the map");
     if (!new CollisionSystem(map).canEnter(spawn)) throw new Error("Spawn is blocked");
+    this.currentMap = map;
     this.currentPosition = { ...spawn };
     this.inventory = new Inventory(capacity);
     this.collision = new CollisionSystem(map);
   }
 
+  get map(): TileMap { return this.currentMap; }
+
   get position(): Position { return { ...this.currentPosition }; }
+
+  /** Atomically move the session to another validated map and walkable spawn. */
+  transitionTo(map: TileMap, spawn: Position): void {
+    const collision = new CollisionSystem(map);
+    if (!map.inBounds(spawn.x, spawn.y) || !collision.canEnter(spawn)) {
+      throw new Error("Transition destination is outside the map or blocked");
+    }
+    this.currentMap = map;
+    this.collision = collision;
+    this.currentPosition = { ...spawn };
+  }
 
   move(direction: Direction): boolean {
     const next = this.collision.tryMove(this.currentPosition, direction);
