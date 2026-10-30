@@ -50,7 +50,8 @@ describe("loadTiledMap", () => {
   it("rejects invalid layer dimensions and malformed warps", () => {
     expect(() => loadTiledMap({ ...fixture, layers: [{ name: "tileLayer", type: "tilelayer", data: [1] }] }, { id: "x", name: "X" })).toThrow();
     const broken = structuredClone(fixture);
-    broken.layers[3].objects[0].properties = [];
+    const warpLayer = broken.layers[3] as { objects: Array<{ properties: Array<{ name: string; value: string | number | boolean }> }> };
+    warpLayer.objects[0].properties = [];
     expect(() => loadTiledMap(broken, { id: "x", name: "X" })).toThrow(/Warp object/);
   });
 });
