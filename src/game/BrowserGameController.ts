@@ -1,3 +1,10 @@
+/**
+ * @file-id ER-FILE-BROWSER-GAME-CONTROLLER-0001
+ * @module-id ER-MOD-GAME-0001
+ * @doc ../../docs/source/BrowserGameController.ts.docs.md
+ * @master-doc ../../docs/MASTER_DOCUMENTATION.md
+ * Purpose: framework-independent UI facade for local gameplay sessions.
+ */
 import { GameRuntime, type RuntimeOptions, type TiledRuntimeOptions } from "./GameRuntime";
 import { ConsumableService } from "./inventory/ConsumableService";
 import { CraftingService, type CraftResult, type CraftingRecipe } from "./inventory/CraftingService";
