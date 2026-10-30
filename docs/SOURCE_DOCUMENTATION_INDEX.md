@@ -41,6 +41,7 @@ IDs are stable and must never be reused. Planned entries must explicitly say Pla
 
 | ER-FILE-TILED-MAP-LOADER-0001 | ER-MOD-WORLD-0001 | [TiledMapLoader.ts](../src/game/world/TiledMapLoader.ts) | [TiledMapLoader.ts.docs.md](./source/TiledMapLoader.ts.docs.md) | Implemented |
 | ER-FILE-TILED-MAP-RUNTIME-0001 | ER-MOD-WORLD-0001 | [TiledMapRuntime.ts](../src/game/world/TiledMapRuntime.ts) | [TiledMapRuntime.ts.docs.md](./source/TiledMapRuntime.ts.docs.md) | Implemented |
+| ER-FILE-TILED-WORLD-REGISTRY-0001 | ER-MOD-WORLD-0001 | [TiledWorldRegistry.ts](../src/game/world/TiledWorldRegistry.ts) | [TiledWorldRegistry.ts.docs.md](./source/TiledWorldRegistry.ts.docs.md) | Implemented |
 
 | ER-FILE-GAME-RUNTIME-0001 | ER-MOD-GAME-0001 | [src/game/GameRuntime.ts](../src/game/GameRuntime.ts) | [GameRuntime.ts.docs.md](./source/GameRuntime.ts.docs.md) | Partial |
 | ER-FILE-BROWSER-GAME-CONTROLLER-0001 | ER-MOD-GAME-0001 | [src/game/BrowserGameController.ts](../src/game/BrowserGameController.ts) | [BrowserGameController.ts.docs.md](./source/BrowserGameController.ts.docs.md) | Partial |
