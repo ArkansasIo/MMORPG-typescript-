@@ -13,14 +13,18 @@ EarthboundRealms [ER-ROOT-0001]
 │   ├── MASTER_DOCUMENTATION.md
 │   ├── REPOSITORY_STRUCTURE.md
 │   ├── SOURCE_DOCUMENTATION_INDEX.md
+│   ├── server/README.md        # backend API and realtime contract
+│   ├── DEPLOYMENT.md            # Pages and backend deployment
 │   └── source/                 # per-file sidecar documents
 ├── src [ER-DIR-CLIENT-0001]
 │   ├── main.ts                 # browser composition root
 │   ├── style.css               # interface presentation
 │   └── game [ER-DIR-GAME-0001]
-│       └── types.ts            # shared domain contracts
-├── database/                   # planned migrations and seed data
-├── server/                     # planned API, services, and tests
+│       ├── types.ts            # shared domain contracts
+│       └── network/             # typed HTTP and WebSocket clients
+├── database/                   # MySQL schema
+├── server/                     # Express API, account auth, cloud saves, WebSocket relay
+├── vite.config.ts              # GitHub Pages base path and Vite build
 ├── scripts/                    # planned tooling
 └── tests/                      # planned automated tests
 ```
