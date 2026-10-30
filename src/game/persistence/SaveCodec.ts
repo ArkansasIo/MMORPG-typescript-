@@ -35,6 +35,25 @@ function validateSave(value: unknown): asserts value is SessionSave {
       !save.equipment || typeof save.equipment !== "object" || Array.isArray(save.equipment)) {
     throw new Error("Save world or progression data is invalid");
   }
+  if (save.tiledWorld !== undefined) {
+    const world = save.tiledWorld;
+    if (!world || typeof world !== "object" || !Array.isArray(world.maps) || world.maps.length < 1 || world.maps.length > 100) {
+      throw new Error("Save Tiled world catalog is invalid");
+    }
+    const mapIds = new Set<string>();
+    for (const map of world.maps) {
+      if (!map || typeof map.mapId !== "string" || !map.mapId.trim() ||
+          typeof map.mapName !== "string" || !map.mapName.trim() ||
+          !map.document || typeof map.document !== "object" || !Array.isArray(map.openedDoorIds) ||
+          map.openedDoorIds.some(id => typeof id !== "string" || !id)) {
+        throw new Error("Save Tiled world map entry is invalid");
+      }
+      if (mapIds.has(map.mapId)) throw new Error("Save Tiled world contains duplicate map IDs");
+      mapIds.add(map.mapId);
+    }
+    if (!mapIds.has(save.mapId)) throw new Error("Save active map is missing from the Tiled world catalog");
+  }
+
   for (const stack of save.inventory) {
     if (!stack || typeof stack.itemId !== "string" || !stack.itemId ||
         !Number.isInteger(stack.quantity) || stack.quantity < 1) {
