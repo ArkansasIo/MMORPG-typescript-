@@ -14,3 +14,8 @@
 
 ## Shop transactions
 The [Inventory.ts](./Inventory.ts) module also provides ShopService for atomic buy/sell checks. Browser-facing operations are exposed by BrowserGameController and surfaced in the Shop tab.
+
+## Resource gathering
+- [GatheringService.ts](./GatheringService.ts) — finite resource node collection with inventory-capacity and tool checks.
+- [ResourceNodes.ts](../data/ResourceNodes.ts) — starter-region gathering nodes.
+- [GatheringService docs](../../../docs/source/GatheringService.ts.docs.md) — API, invariants, and persistence limits.
