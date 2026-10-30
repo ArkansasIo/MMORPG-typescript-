@@ -18,3 +18,14 @@
 ## Current boundaries
 
 This runtime is not yet the browser UI's sole state owner. The legacy `src/main.ts` still maintains separate prototype state, so the next integration step is to migrate the UI to this runtime and remove duplicated combat/inventory state. Save snapshots also need a restore API and server-side persistence before they can be used as production saves.
+
+
+## Tiled map integration
+
+`GameRuntime.createFromTiledMap(options)` now supports authored Tiled JSON maps. It validates the document through `loadTiledMap`, creates a normal `GameSession` using the imported `TileMap`, and attaches `TiledMapRuntime` as the optional `tiledWorld` property. The existing procedural `create` and `restore` paths remain available.
+
+The browser facade exposes the same capability through `BrowserGameController.startTiledMap(options)`.
+
+## Current limitations
+
+Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering, automatic map transition orchestration, and save restoration for Tiled map IDs remain future work. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
