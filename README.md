@@ -50,6 +50,12 @@ The browser client now uses an original retro console-RPG visual direction inspi
 
 The visual refresh is presentation-only: it keeps the existing TypeScript game runtime, character progression, inventory, quests, shops, crafting, saves, and combat actions. The current enemy portraits are temporary glyph-based representations; a dedicated original pixel-art sprite atlas and tile set remain a follow-on asset task.
 
+## Tiled JRPG map integration
+
+An original TypeScript adapter now imports Tiled JSON maps into the existing world model. It supports layered tile GIDs, terrain and collision metadata, enemy territory encounter IDs, map warps, NPC metadata, keyed doors, and talk-across markers. The adapter and runtime helpers are covered by Vitest tests. See [Tiled Map Import](docs/TILED_MAP_IMPORT.md) and [upstream research/licensing notes](docs/UPSTREAM_DRAGONWARRIORJS.md).
+
+The reference project, [bobbylight/DragonWarriorJS](https://github.com/bobbylight/DragonWarriorJS), is itself primarily TypeScript, despite its repository description mentioning JavaScript. Its README documents Tiled map and RPG features. No license file or license grant was found in the inspected upstream root/README, so no upstream source code or assets have been copied into this repository. The new adapter is an independent implementation of documented concepts.
+
 ## Requirements
 - Node.js 20 or later
 - npm
