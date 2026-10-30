@@ -36,3 +36,4 @@
 See [REPOSITORY_STRUCTURE.md](./REPOSITORY_STRUCTURE.md). The current repository is a prototype; the full target structure is a governed plan and should be created incrementally.
 
 - [Classic JRPG / Dragon Warrior adaptation plan](./CLASSIC_JRPG_ADAPTATION.md) — `ER-DOC-JRPG-ADAPT-0001`.
+- [Backend API and Realtime Service](./server/README.md) — account API, cloud saves, and prototype WebSocket rooms.
