@@ -60,11 +60,12 @@ export class BrowserGameController {
     if (!save) throw new Error(`No saved game exists in slot: ${slot}`);
     this.runtime = GameRuntime.restore(save);
     this.interactions = new InteractionService(this.runtime.session, STARTER_DIALOGUE);
+    if (save.resourceNodes) this.gathering.restore(save.resourceNodes);
     return this.runtime;
   }
 
   saveGame(slot = "main"): void {
-    this.saves.save(slot, this.game.save());
+    this.saves.save(slot, { ...this.game.save(), resourceNodes: this.gathering.snapshot() });
   }
 
   hasSave(slot = "main"): boolean { return this.saves.has(slot); }
