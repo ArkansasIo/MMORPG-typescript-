@@ -60,6 +60,14 @@ describe("TiledMapRuntime", () => {
     expect(consumeKey).toHaveBeenCalledTimes(2);
   });
 
+  it("restores opened doors without consuming inventory keys", () => {
+    const runtime = new TiledMapRuntime(source);
+    runtime.restoreOpenedDoors(["3"]);
+    expect(runtime.isDoorOpen("3")).toBe(true);
+    expect(runtime.tileGidAt({ x: 1, y: 1 })).toBe(7);
+    expect(runtime.source.map.getTile(1, 1)).toMatchObject({ kind: "floor", blocked: false });
+    expect(() => runtime.restoreOpenedDoors(["missing"])).toThrow("unknown Tiled door");
+  });
   it("retains optional overlay layer GIDs and rejects out-of-bounds access", () => {
     const runtime = new TiledMapRuntime(source);
     expect(runtime.tileGidAt({ x: 0, y: 1 }, "overlay")).toBe(1);
