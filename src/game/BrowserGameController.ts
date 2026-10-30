@@ -74,6 +74,14 @@ export class BrowserGameController {
     return world?.npcInFrontOf(this.game.session.position, direction);
   }
 
+  /** Begin the dialogue assigned to the NPC directly in front of the player. */
+  beginFacingNpcDialogue(direction: Direction) {
+    const npc = this.getFacingNpc(direction);
+    if (!npc) return undefined;
+    const dialogue = this.beginDialogue(npc.dialogueId);
+    return dialogue ? { npc, dialogue } : { npc, dialogue: undefined };
+  }
+
   /** Open the authored Tiled door in front of the player, delegating key consumption. */
   openFacingDoor(direction: Direction, consumeKey: () => boolean): boolean {
     const world = this.game.tiledWorld;
