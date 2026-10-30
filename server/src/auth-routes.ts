@@ -3,6 +3,7 @@
  * @doc ../../docs/source/auth-routes.ts.docs.md
  * Registration/login routes. Credentials are never returned or logged.
  */
+import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import { pool } from "./db/pool.js";
 import { hashPassword, signToken, verifyPassword, requireAuth, authClaims } from "./auth.js";
@@ -16,16 +17,21 @@ router.post("/register", async (req, res) => {
   if (!validName(displayName) || !validEmail(email) || typeof password !== "string" || password.length < 10 || password.length > 128) {
     res.status(400).json({ error: "Provide a valid display name, email, and password (10–128 characters)." }); return;
   }
+  let connection;
   try {
     const passwordHash = await hashPassword(password);
-    const id = crypto.randomUUID();
-    await pool.execute("INSERT INTO accounts (id, email, password_hash, player_id) VALUES (?, ?, ?, ?)", [id, email, passwordHash, id]);
-    await pool.execute("INSERT INTO players (id, display_name, character_class, level, xp, gold) VALUES (?, ?, 'Fighter', 1, 0, 0)", [id, displayName]);
+    const id = randomUUID();
+    connection = await pool.getConnection();
+    await connection.beginTransaction();
+    await connection.execute("INSERT INTO players (id, display_name, character_class, level, xp, gold) VALUES (?, ?, 'Fighter', 1, 0, 0)", [id, displayName]);
+    await connection.execute("INSERT INTO accounts (id, email, password_hash, player_id) VALUES (?, ?, ?, ?)", [id, email, passwordHash, id]);
+    await connection.commit();
     res.status(201).json({ token: signToken(id, displayName), tokenType: "Bearer", expiresIn: 3600, player: { id, displayName, level: 1 } });
   } catch (error) {
+    if (connection) await connection.rollback();
     const duplicate = typeof error === "object" && error !== null && "code" in error && (error as {code?:string}).code === "ER_DUP_ENTRY";
     res.status(duplicate ? 409 : 503).json({ error: duplicate ? "An account with that email already exists." : "Account service unavailable." });
-  }
+  } finally { connection?.release(); }
 });
 router.post("/login", async (req, res) => {
   const email = typeof req.body?.email === "string" ? req.body.email.trim().toLowerCase() : "";
