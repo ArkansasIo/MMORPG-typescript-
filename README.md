@@ -204,3 +204,8 @@ Quest item rewards are granted only when their item definitions have been regist
 - [Loot table tests](src/game/__tests__/loot-tables.test.ts).
 - Creature victory rewards now include XP, gold, kill-quest progress, and registered item drops through [BattleService](src/game/combat/BattleService.ts).
 - [Loot table documentation](docs/source/LootTables.ts.docs.md) explains drop probabilities and unresolved item handling.
+
+
+## Backend account, cloud-save, and realtime services
+
+The API now includes account registration/login with scrypt password hashes and one-hour signed bearer tokens, authenticated profile lookup, versioned cloud-save endpoints, and an authenticated WebSocket room relay. The relay supports ephemeral room membership and validated one-tile movement broadcasts; it is not yet a persistent authoritative MMO simulation. Configure `AUTH_SECRET` in `.env` before starting the API and initialize the updated MySQL schema. See [Backend API and Realtime Service](docs/server/README.md) for endpoint contracts and limitations.
