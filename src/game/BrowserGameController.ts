@@ -1,4 +1,4 @@
-import { GameRuntime, type RuntimeOptions } from "./GameRuntime";
+import { GameRuntime, type RuntimeOptions, type TiledRuntimeOptions } from "./GameRuntime";
 import { ConsumableService } from "./inventory/ConsumableService";
 import { CraftingService, type CraftResult, type CraftingRecipe } from "./inventory/CraftingService";
 import { STARTER_ITEMS } from "./data/StarterContent";
