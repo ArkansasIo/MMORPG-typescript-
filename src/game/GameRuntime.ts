@@ -49,6 +49,7 @@ export class GameRuntime {
   }
 
   static restore(save: SessionSave): GameRuntime {
+    if (save.tiledWorld) return GameRuntime.restoreTiledWorld(save);
     const match = /^starter-region-(-?\d+)$/.exec(save.mapId);
     if (!match) throw new Error("Save does not identify a restorable starter region");
     const seed = Number(match[1]);
@@ -123,6 +124,42 @@ export class GameRuntime {
       ...(options.additionalMaps ?? [])
     ];
     return new GameRuntime(session, new BattleService(session), registry.get(options.mapId), registry, mapDocuments);
+  }
+
+  private static restoreTiledWorld(save: SessionSave): GameRuntime {
+    const worldSave = save.tiledWorld;
+    if (!worldSave || !Array.isArray(worldSave.maps) || worldSave.maps.length < 1 || worldSave.maps.length > 100) {
+      throw new Error("Tiled world save catalog is invalid");
+    }
+    const entries = worldSave.maps.map(entry => {
+      if (!entry || typeof entry.mapId !== "string" || !entry.mapId.trim() ||
+          typeof entry.mapName !== "string" || !entry.mapName.trim() ||
+          !entry.document || typeof entry.document !== "object" || !Array.isArray(entry.openedDoorIds)) {
+        throw new Error("Tiled world save entry is invalid");
+      }
+      return { ...entry, loaded: loadTiledMap(entry.document, { id: entry.mapId, name: entry.mapName }) };
+    });
+    const registry = new TiledWorldRegistry(entries.map(entry => entry.loaded));
+    for (const entry of entries) registry.get(entry.mapId)!.restoreOpenedDoors(entry.openedDoorIds);
+    const activeWorld = registry.get(save.mapId);
+    if (!activeWorld) throw new Error("Saved active Tiled map is missing from the world catalog");
+    const data = save.character;
+    if (!Number.isInteger(data.level) || data.level < 1 || !Number.isFinite(data.xp) || data.xp < 0 ||
+        !Number.isFinite(data.hp) || !Number.isFinite(data.maxHp) || data.maxHp < 1 ||
+        data.hp < 0 || data.hp > data.maxHp || !Number.isSafeInteger(data.gold) || data.gold < 0) {
+      throw new Error("Saved character progression is invalid");
+    }
+    const character = new Character(data.name, data.characterClass, { id: data.id, abilities: data.abilities });
+    character.level = data.level;
+    character.xp = data.xp;
+    character.hp = data.hp;
+    character.maxHp = data.maxHp;
+    character.gold = data.gold;
+    const session = new GameSession(character, activeWorld.source.map, save.position);
+    GameRuntime.registerStarterContent(session);
+    session.restore(save);
+    const mapDocuments = entries.map(({ mapId, mapName, document }) => ({ mapId, mapName, document }));
+    return new GameRuntime(session, new BattleService(session), activeWorld, registry, mapDocuments);
   }
 
   private static restoreTiledWorld(save: SessionSave): GameRuntime {
