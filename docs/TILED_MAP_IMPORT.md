@@ -29,7 +29,7 @@ Tiled object pixel coordinates are converted to tile coordinates using floor(x /
 
 Use `GameRuntime.createFromTiledMap` to create a playable domain session directly from an authored map. The browser facade exposes `startTiledMap(options)`; the title screen accepts multiple Tiled JSON files: the first selected file is the starting map, remaining files are registered as destinations, and the first walkable tile is selected as spawn. The sample `starter-village.json` and `north-road.json` files form a two-way route.
 
-The renderer currently uses the existing pixel-style glyph presentation. Actual Tiled tileset atlas rendering and Tiled-map save restoration remain incomplete.
+The renderer currently uses the existing pixel-style glyph presentation. Actual Tiled tileset atlas rendering remains incomplete. Tiled save snapshots include all registered map documents and opened-door IDs, allowing local restoration after a reload.
 
 ## Included sample map
 
