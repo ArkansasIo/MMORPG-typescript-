@@ -15,3 +15,10 @@ controller.continueGame("main");
 
 ## Scope
 This facade does not render UI or automatically replace the existing prototype state in `src/main.ts`. A subsequent UI change should route menus and inputs through this controller. Save data remains client-controlled and must not be trusted for authoritative multiplayer state.
+
+
+## Tiled map session support
+
+`startTiledMap(options)` now creates a runtime through `GameRuntime.createFromTiledMap` and resets the interaction service against that imported map's `GameSession`. The caller supplies the typed Tiled document, map ID/name, character details, and optional walkable spawn coordinate.
+
+The current browser renderer does not yet provide a Tiled map picker, tileset image rendering, map transition orchestration, or Tiled-map save restoration.
