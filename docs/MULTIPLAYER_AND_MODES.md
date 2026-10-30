@@ -23,7 +23,7 @@ Show an accessible loading screen with the selected mode, current stage, progres
 - Client: TypeScript + Vite.
 - API: Node.js + Express.
 - Persistence: MySQL.
-- Multiplayer transport: WebSocket service (not implemented in this starter yet).
+- Multiplayer transport: authenticated WebSocket room relay (implemented as an ephemeral prototype; not a persistent MMO transport).
 - Authority: server must validate combat, movement, inventory, currency, and quest completion.
 - Offline saves: local browser storage for prototype; use IndexedDB for a production client.
 - Session: reconnect tokens must be short-lived and protected; never store passwords in localStorage.
@@ -38,4 +38,4 @@ Show an accessible loading screen with the selected mode, current stage, progres
 7. Persistent player save/load and basic anti-cheat checks.
 
 ## Current implementation status
-The existing browser prototype supports a local single-player loop, local browser save, keyboard/mouse controls, and Gamepad API polling. The title screen, staged loading screen, character creation, online authentication, WebSocket multiplayer, and server-authoritative synchronization are design requirements and remain to be implemented. This document describes the intended behavior; it does not claim those systems are already running.
+The browser prototype supports local single-player play, local browser saves, keyboard/mouse controls, and Gamepad API polling. The API now implements account registration/login, bearer-authenticated profile lookup and cloud saves, plus a WebSocket relay with authenticated ephemeral rooms and movement broadcasts. Typed browser API and realtime clients exist, but are not yet integrated into the game UI. Persistent sessions, reconnect, party/chat features, server-authoritative movement against world collision, combat validation, and multi-instance room coordination remain planned. The title-screen and loading-flow requirements are not all implemented.
