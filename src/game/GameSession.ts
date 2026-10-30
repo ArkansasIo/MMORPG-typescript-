@@ -3,6 +3,7 @@ import { Inventory, ShopService, type ItemDefinition } from "./inventory/Invento
 import { QuestEngine, type ObjectiveKind, type QuestDefinition } from "./quests/QuestEngine";
 import { CollisionSystem, type Direction, type Position } from "./world/CollisionSystem";
 import { TileMap } from "./world/TileMap";
+import type { TiledMapDocument } from "./world/TiledMapLoader";
 
 export interface SessionSave {
   schemaVersion: 1;
@@ -12,6 +13,7 @@ export interface SessionSave {
   inventory: ReturnType<Inventory["list"]>;
   equipment: ReturnType<Inventory["equippedItems"]>;
   quests: ReturnType<QuestEngine["getProgress"]>[];
+  tiledWorld?: { maps: Array<{ mapId: string; mapName: string; document: TiledMapDocument; openedDoorIds: string[] }> };
 }
 export interface QuestRewardResult {
   completedQuestIds: string[];
