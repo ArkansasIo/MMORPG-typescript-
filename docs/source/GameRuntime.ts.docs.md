@@ -24,8 +24,8 @@ This runtime is not yet the browser UI's sole state owner. The legacy `src/main.
 
 `GameRuntime.createFromTiledMap(options)` now supports authored Tiled JSON maps. It validates the document through `loadTiledMap`, creates a normal `GameSession` using the imported `TileMap`, and attaches `TiledMapRuntime` as the optional `tiledWorld` property. The existing procedural `create` and `restore` paths remain available.
 
-The browser facade exposes the same capability through `BrowserGameController.startTiledMap(options)`. `additionalMaps` registers more Tiled documents in the same world catalog. Successful warps replace the active session map and arrival coordinate; unresolved destinations leave the player on the source map and are exposed through `lastWarpResolution`.
+The browser facade exposes the same capability through `BrowserGameController.startTiledMap(options)`. The title-screen importer accepts multiple JSON files; the first file is the active map and the remaining documents are registered as transition targets. On successful warp, the same `GameSession` preserves character, inventory, and quest progress while changing map and position. `additionalMaps` registers more Tiled documents in the same world catalog. Successful warps replace the active session map and arrival coordinate; unresolved destinations leave the player on the source map and are exposed through `lastWarpResolution`.
 
 ## Current limitations
 
-Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering and save restoration for Tiled map IDs remain future work. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
+Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering and save restoration for Tiled map IDs remain future work. `lastWarpResolution` records ready, missing-map, or blocked-destination results. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
