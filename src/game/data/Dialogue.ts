@@ -20,4 +20,18 @@ export const STARTER_DIALOGUE: DialogueTree[] = [
       { id: "farewell", speaker: "Village Elder", text: "May the old roads guide you home." }
     ]
   }
+,
+  {
+    id: "roadside-scout",
+    startNodeId: "warning",
+    nodes: [
+      { id: "warning", speaker: "Roadside Scout", text: "The old road bends north. Keep to the grass and watch for creatures in the brush.", choices: [
+        { id: "thanks", text: "Thanks for the warning." },
+        { id: "ask-village", text: "How do I return to the village?", nextNodeId: "directions" }
+      ]},
+      { id: "directions", speaker: "Roadside Scout", text: "Follow the marked path south. The village gate is just beyond the bend.", choices: [
+        { id: "understood", text: "Understood." }
+      ]}
+    ]
+  }
 ];
