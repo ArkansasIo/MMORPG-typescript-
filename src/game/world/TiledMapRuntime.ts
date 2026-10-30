@@ -1,6 +1,8 @@
 /**
  * @file-id ER-FILE-TILED-MAP-RUNTIME-0001
  * @module-id ER-MOD-WORLD-0001
+ * @doc ../../../docs/source/TiledMapRuntime.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Runtime helpers for map transitions, keyed doors, NPC lookup and encounter regions.
  */
 import type { Position } from "./CollisionSystem";
