@@ -32,8 +32,10 @@ describe("TiledMapRuntime", () => {
   it("opens a keyed door once and updates the visual tile GID", () => {
     const runtime = new TiledMapRuntime(source);
     const consumeKey = vi.fn(() => true);
+    expect(runtime.source.map.getTile(1, 1)?.blocked).toBe(true);
     expect(runtime.openDoor("3", consumeKey)).toBe(true);
     expect(runtime.tileGidAt({ x: 1, y: 1 })).toBe(7);
+    expect(runtime.source.map.getTile(1, 1)).toMatchObject({ kind: "floor", blocked: false });
     expect(runtime.isDoorOpen("3")).toBe(true);
     expect(runtime.openDoor("3", consumeKey)).toBe(true);
     expect(consumeKey).toHaveBeenCalledTimes(1);
