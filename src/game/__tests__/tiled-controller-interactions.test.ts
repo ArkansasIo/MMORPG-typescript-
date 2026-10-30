@@ -39,6 +39,7 @@ describe("BrowserGameController Tiled interactions", () => {
 
     expect(controller.getFacingNpc("east")?.name).toBe("Village Elder");
     expect(controller.getFacingNpc("north")).toBeUndefined();
+    expect(controller.beginFacingNpcDialogue("east")?.dialogue?.node.speaker).toBe("Village Elder");
     const consumeKey = vi.fn(() => true);
     expect(controller.openFacingDoor("south", consumeKey)).toBe(true);
     expect(consumeKey).toHaveBeenCalledOnce();
