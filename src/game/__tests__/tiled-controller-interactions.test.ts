@@ -40,9 +40,11 @@ describe("BrowserGameController Tiled interactions", () => {
     expect(controller.getFacingNpc("east")?.name).toBe("Village Elder");
     expect(controller.getFacingNpc("north")).toBeUndefined();
     expect(controller.beginFacingNpcDialogue("east")?.dialogue?.node.speaker).toBe("Village Elder");
-    const consumeKey = vi.fn(() => true);
+    expect(controller.game.session.grantRegisteredItem("iron-key")).toBe(true);
+    const consumeKey = vi.fn(() => controller.game.session.inventory.remove("iron-key", 1));
     expect(controller.openFacingDoor("south", consumeKey)).toBe(true);
     expect(consumeKey).toHaveBeenCalledOnce();
+    expect(controller.game.session.inventory.quantity("iron-key")).toBe(0);
     expect(controller.game.tiledWorld?.tileGidAt({ x: 0, y: 1 })).toBe(2);
     expect(controller.game.session.map.getTile(0, 1)).toMatchObject({ kind: "floor", blocked: false });
   });
