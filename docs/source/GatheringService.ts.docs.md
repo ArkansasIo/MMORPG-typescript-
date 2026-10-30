@@ -18,3 +18,11 @@ A failed gather never consumes node reserves. A successful gather reduces reserv
 
 ## Limitations
 Node reserves are held in memory and are not included in the save schema yet. Tool ownership is passed as a boolean by the caller; equipment-aware tool validation and multiplayer server authority remain future work.
+
+## Persistence
+- `snapshot()` exports each known node ID and remaining reserve.
+- `restore(snapshot)` validates a complete, unique set of known node IDs and ensures reserves remain between zero and each node's authored initial reserve.
+- The browser controller includes these snapshots in save slots and restores them when continuing a game.
+
+## Limitations
+Node reserves persist in local save slots, but are not shared across players or synchronized by a server. Timed respawn is not implemented.
