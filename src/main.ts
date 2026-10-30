@@ -43,8 +43,8 @@ function titleScreen(): void {
     if (!file) { alert("Choose a Tiled JSON map file first."); return; }
     try {
       const document = JSON.parse(await file.text()) as TiledMapDocument;
-      const id = file.name.replace(/\\.json$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "") || "imported-map";
-      const loaded = loadTiledMap(document, { id, name: file.name.replace(/\\.json$/i, "") || "Imported Map" });
+      const id = file.name.replace(/\.json$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "") || "imported-map";
+      const loaded = loadTiledMap(document, { id, name: file.name.replace(/\.json$/i, "") || "Imported Map" });
       const spawnIndex = loaded.map.data.tiles.findIndex(tile => !tile.blocked);
       if (spawnIndex < 0) throw new Error("This map has no walkable spawn tile.");
       const spawn = { x: spawnIndex % loaded.map.width, y: Math.floor(spawnIndex / loaded.map.width) };
