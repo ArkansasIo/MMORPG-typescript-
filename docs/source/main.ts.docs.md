@@ -20,3 +20,8 @@ Browser state is not trusted by an online server. The client is not an authorita
 
 ## Validation
 Run `npm install` and `npm run build` at repository root. This document does not claim the build has passed.
+
+
+## Tiled map import
+
+The title screen includes a JSON file picker and **Start on Imported Map** action. It parses a selected Tiled map, validates it with `loadTiledMap`, chooses the first unblocked tile for spawn, and starts the controller's Tiled runtime. The existing tile renderer displays imported terrain kinds and collision. Tiled tileset image atlases, second-layer drawing, map-transition handling, and direct NPC/door UI interactions remain incomplete.
