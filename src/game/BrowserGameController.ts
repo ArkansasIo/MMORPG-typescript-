@@ -44,6 +44,13 @@ export class BrowserGameController {
     return this.runtime;
   }
 
+  /** Start a session from a validated, authored Tiled JSON map. */
+  startTiledMap(options: TiledRuntimeOptions): GameRuntime {
+    this.runtime = GameRuntime.createFromTiledMap(options);
+    this.interactions = new InteractionService(this.runtime.session, STARTER_DIALOGUE);
+    return this.runtime;
+  }
+
   continueGame(slot = "main"): GameRuntime {
     const save = this.saves.load(slot);
     if (!save) throw new Error(`No saved game exists in slot: ${slot}`);
