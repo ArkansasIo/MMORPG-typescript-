@@ -3,4 +3,4 @@
 - **Source backlink:** [../../database/schema.sql](../../database/schema.sql)
 - **Master:** [../MASTER_DOCUMENTATION.md](../MASTER_DOCUMENTATION.md)
 
-Creates the database and tables for players, world seeds, player quest progress, player saves, and generated regions. This is an initial schema, not a versioned migration system. Back up data and use migrations before production upgrades.
+Creates the database and tables for players, accounts, world seeds, player quest progress, player saves, and generated regions. Accounts reference player records and are deleted with their player. This is an initial schema, not a versioned migration system. Back up data and use migrations before production upgrades.
