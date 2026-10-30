@@ -13,11 +13,11 @@ This project contains an original TypeScript Tiled JSON adapter at `src/game/wor
 
 ## Runtime interactions
 
-`TiledMapRuntime` exposes tile lookups for NPCs, doors, warps, talk-across markers, encounter groups, and visual GIDs. Directional helpers `npcInFrontOf(position, direction)` and `doorInFrontOf(position, direction)` resolve entities in the adjacent tile the player faces. `openDoorInFrontOf` opens a matching adjacent door, consumes a key only after a door is found, and updates both its visual GID and collision state. These are domain APIs; browser controls are not yet wired to them.
+`TiledMapRuntime` exposes tile lookups for NPCs, doors, warps, talk-across markers, encounter groups, and visual GIDs. Directional helpers `npcInFrontOf(position, direction)` and `doorInFrontOf(position, direction)` resolve entities in the adjacent tile the player faces. `openDoorInFrontOf` opens a matching adjacent door, consumes a key only after a door is found, and updates both its visual GID and collision state. The browser binds E to NPC dialogue and F to door opening. The door action consumes one `iron-key` item only when a matching closed door is present.
 
 ## Cross-map warp catalog
 
-`TiledWorldRegistry` registers loaded authored maps and resolves a warp at a source coordinate. It distinguishes a missing target map from a blocked or out-of-bounds arrival tile, and returns a validated target runtime plus arrival coordinate when ready. It does not yet replace the active `GameSession` map or trigger transitions from browser movement.
+`TiledWorldRegistry` registers loaded authored maps and resolves a warp at a source coordinate. It distinguishes a missing target map from a blocked or out-of-bounds arrival tile, and returns a validated target runtime plus arrival coordinate when ready. `GameRuntime` registers the starting document plus `additionalMaps`. When movement enters a warp tile, it switches the active `GameSession` map and spawn position only if the destination map is registered and the arrival tile is walkable. Missing or blocked destinations are reported without changing maps.
 
 ## Tileset properties and coordinates
 
@@ -27,9 +27,9 @@ Tiled object pixel coordinates are converted to tile coordinates using floor(x /
 
 ## Runtime integration
 
-Use `GameRuntime.createFromTiledMap` to create a playable domain session directly from an authored map. The browser facade exposes `startTiledMap(options)`; the title screen accepts a Tiled JSON upload and selects the first walkable tile as spawn.
+Use `GameRuntime.createFromTiledMap` to create a playable domain session directly from an authored map. The browser facade exposes `startTiledMap(options)`; the title screen accepts multiple Tiled JSON files: the first selected file is the starting map, remaining files are registered as destinations, and the first walkable tile is selected as spawn. The sample `starter-village.json` and `north-road.json` files form a two-way route.
 
-The renderer currently uses the existing pixel-style glyph presentation. Actual Tiled tileset atlas rendering, automatic cross-map warp transitions, full browser NPC/door controls, and Tiled-map save restoration remain incomplete.
+The renderer currently uses the existing pixel-style glyph presentation. Actual Tiled tileset atlas rendering and Tiled-map save restoration remain incomplete.
 
 ## Included sample map
 
