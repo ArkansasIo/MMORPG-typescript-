@@ -110,7 +110,7 @@ function tabContent(): string {
     }).join("");
   }
   if (selectedTab === "World Map") {
-    return `<p>Map: <b>${escapeHtml(session.map.data.name)}</b></p><p>Map ID: <code>${escapeHtml(session.map.data.id)}</code></p><p>Region size: ${session.map.width} × ${session.map.height} tiles.</p>${game.tiledWorld ? `<p>Authored Tiled map · ${game.tiledWorld.warps.length} warps · ${game.tiledWorld.npcs.length} NPCs · ${game.tiledWorld.doors.length} doors</p>` : "<p>Procedurally generated and deterministic for the same seed.</p>"}`;
+    return `<p>Map: <b>${escapeHtml(session.map.data.name)}</b></p><p>Map ID: <code>${escapeHtml(session.map.data.id)}</code></p><p>Region size: ${session.map.width} × ${session.map.height} tiles.</p>${game.tiledWorld ? `<p>Authored Tiled map · ${game.tiledWorld.source.warps.length} warps · ${game.tiledWorld.source.npcs.length} NPCs · ${game.tiledWorld.source.doors.length} doors</p>` : "<p>Procedurally generated and deterministic for the same seed.</p>"}`;
   }
   if (selectedTab === "Codex") {
     return `<p>Known creatures: Meadow Slime, Grey Wolf, Roadside Skeleton.</p><p>Combat uses turn order, attack rolls, defense, damage types, XP, gold, and loot.</p>`;
