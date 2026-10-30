@@ -29,6 +29,26 @@ describe("Save codec", () => {
     expect(() => encodeSave(source)).toThrow("inventory");
   });
 
+  it("round-trips a Tiled map catalog and rejects duplicate map IDs", () => {
+    const source = createSave();
+    const document = {
+      type: "map" as const, width: 1, height: 1, tilewidth: 16, tileheight: 16,
+      layers: [{ name: "tileLayer", type: "tilelayer" as const, data: [1] }]
+    };
+    source.tiledWorld = { maps: [{ mapId: source.mapId, mapName: "Save Map", document, openedDoorIds: [] }] };
+    expect(decodeSave(encodeSave(source))).toEqual(source);
+    source.tiledWorld.maps.push({ mapId: source.mapId, mapName: "Duplicate", document, openedDoorIds: [] });
+    expect(() => encodeSave(source)).toThrow("duplicate map IDs");
+  });
+
+  it("rejects a Tiled save whose active map is absent from its catalog", () => {
+    const source = createSave();
+    source.tiledWorld = { maps: [{ mapId: "other-map", mapName: "Other", document: {
+      type: "map", width: 1, height: 1, tilewidth: 16, tileheight: 16,
+      layers: [{ name: "tileLayer", type: "tilelayer", data: [1] }]
+    }, openedDoorIds: [] }] };
+    expect(() => encodeSave(source)).toThrow("active map is missing");
+  });
   it("returns a detached object when decoding", () => {
     const source = createSave();
     const loaded = decodeSave(encodeSave(source));
