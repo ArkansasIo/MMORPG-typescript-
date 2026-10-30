@@ -35,6 +35,16 @@ function validateSave(value: unknown): asserts value is SessionSave {
       !save.equipment || typeof save.equipment !== "object" || Array.isArray(save.equipment)) {
     throw new Error("Save world or progression data is invalid");
   }
+  if (save.resourceNodes !== undefined) {
+    if (!Array.isArray(save.resourceNodes)) throw new Error("Save resource node state is invalid");
+    const seenNodes = new Set<string>();
+    for (const node of save.resourceNodes) {
+      if (!node || typeof node.id !== "string" || !node.id.trim() || seenNodes.has(node.id) || !Number.isInteger(node.remaining) || node.remaining < 0) {
+        throw new Error("Save resource node state is invalid");
+      }
+      seenNodes.add(node.id);
+    }
+  }
   if (save.tiledWorld !== undefined) {
     const world = save.tiledWorld;
     if (!world || typeof world !== "object" || !Array.isArray(world.maps) || world.maps.length < 1 || world.maps.length > 100) {
