@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { GameRuntime } from "./GameRuntime";
+import { decodeSave, encodeSave } from "./persistence/SaveCodec";
 
 const mapDocument = {
   type: "map" as const,
@@ -100,6 +101,44 @@ describe("GameRuntime Tiled integration", () => {
     expect(game.session.map.data.id).toBe("field");
   });
 
+  it("round-trips a multi-map Tiled save including opened doors and active destination", () => {
+    const targetDocument = {
+      type: "map" as const, width: 3, height: 3, tilewidth: 16, tileheight: 16,
+      tilesets: [{ firstgid: 1, tiles: [{ id: 0, properties: [{ name: "kind", value: "grass" }] }] }],
+      layers: [
+        { name: "tileLayer", type: "tilelayer" as const, data: [1, 1, 1, 1, 1, 1, 1, 1, 1] },
+        { name: "collisionLayer", type: "tilelayer" as const, data: [0, 0, 0, 0, 0, 0, 0, 0, 0] }
+      ]
+    };
+    const sourceDocument = {
+      ...targetDocument,
+      layers: [
+        { name: "tileLayer", type: "tilelayer" as const, data: [1, 1, 1, 1, 1, 1, 1, 1, 1] },
+        { name: "collisionLayer", type: "tilelayer" as const, data: [0, 0, 0, 0, 0, 0, 0, 0, 1] },
+        { name: "warpLayer", type: "objectgroup" as const, objects: [{
+          id: 40, type: "warp", x: 16, y: 0,
+          properties: [{ name: "map", value: "north-road" }, { name: "col", value: 1 }, { name: "row", value: 1 }]
+        }] },
+        { name: "npcLayer", type: "objectgroup" as const, objects: [{
+          id: 41, type: "door", x: 32, y: 32, properties: [{ name: "replacementTileIndex", value: 1 }]
+        }] }
+      ]
+    };
+    const game = GameRuntime.createFromTiledMap({
+      seed: 4, characterName: "Ada", characterClass: "Fighter",
+      mapId: "starter-village", mapName: "Starter Village", document: sourceDocument,
+      spawn: { x: 0, y: 0 }, additionalMaps: [{ mapId: "north-road", mapName: "North Road", document: targetDocument }]
+    });
+    expect(game.tiledWorld?.openDoor("41", () => true)).toBe(true);
+    expect(game.move("east")).toBe(true);
+    const restored = GameRuntime.restore(decodeSave(encodeSave(game.save())));
+    expect(restored.session.map.data.id).toBe("north-road");
+    expect(restored.session.position).toEqual({ x: 1, y: 1 });
+    const village = restored.tiledRegistry?.get("starter-village");
+    expect(village?.isDoorOpen("41")).toBe(true);
+    expect(village?.source.map.getTile(2, 2)).toMatchObject({ kind: "floor", blocked: false });
+    expect(village?.tileGidAt({ x: 2, y: 2 })).toBe(1);
+  });
   it("rejects a spawn on a blocked tile", () => {
     const blocked = structuredClone(mapDocument);
     blocked.layers[1].data![4] = 1;
