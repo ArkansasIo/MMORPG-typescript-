@@ -68,6 +68,19 @@ export class BrowserGameController {
 
   move(direction: Direction): boolean { return this.game.move(direction); }
 
+  /** Resolve an authored Tiled NPC in the tile directly in front of the player. */
+  getFacingNpc(direction: Direction) {
+    const world = this.game.tiledWorld;
+    return world?.npcInFrontOf(this.game.session.position, direction);
+  }
+
+  /** Open the authored Tiled door in front of the player, delegating key consumption. */
+  openFacingDoor(direction: Direction, consumeKey: () => boolean): boolean {
+    const world = this.game.tiledWorld;
+    if (!world) return false;
+    return world.openDoorInFrontOf(this.game.session.position, direction, consumeKey);
+  }
+
   useItem(itemId: string): ConsumableResult {
     return this.consumables.use(itemId, this.game.session.inventory, this.game.session.character);
   }
