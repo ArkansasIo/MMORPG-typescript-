@@ -28,3 +28,23 @@ const map = result.map;
 ```
 
 The result retains the visual GID layers and typed warps, NPC metadata, doors, talk-across markers, and map properties so the renderer and interaction systems can consume them without coupling Tiled parsing to game rules.
+
+## Runtime integration
+
+Use `GameRuntime.createFromTiledMap` to create a playable domain session directly from an authored map. It validates the Tiled document, constructs the existing `GameSession` against the imported `TileMap`, and exposes a `TiledMapRuntime` as `game.tiledWorld` for warp, NPC, encounter-region, talk-across, door, and visual-GID lookups.
+
+```ts
+const game = GameRuntime.createFromTiledMap({
+  seed: 2026,
+  characterName: "Wayfarer",
+  characterClass: "Fighter",
+  mapId: "starter-village",
+  mapName: "Starter Village",
+  document: tiledJson,
+  spawn: { x: 2, y: 2 }
+});
+game.move("north");
+const nearbyNpc = game.tiledWorld?.npcAt(game.session.position);
+```
+
+The framework-independent browser facade also exposes `startTiledMap(options)`. The current browser renderer still renders the procedural map path; this integration makes the imported map available to the domain runtime and tests but does not yet provide Tiled tileset image rendering or map-transition orchestration. Tiled map saves are not yet restorable through the current procedural-only save restoration path; do not treat this as completed persistence.
