@@ -30,3 +30,11 @@ IDs are stable and must never be reused. Planned entries must explicitly say Pla
 | ER-FILE-SERVER-ENTRY-0001 | ER-MOD-SERVER-APP-0001 | [server/src/index.ts](../server/src/index.ts) | [server-index.ts.docs.md](./source/server-index.ts.docs.md) | Partial |
 | ER-FILE-SERVER-DB-POOL-0001 | ER-MOD-SERVER-DB-0001 | [server/src/db/pool.ts](../server/src/db/pool.ts) | [server-pool.ts.docs.md](./source/server-pool.ts.docs.md) | Partial |
 | ER-FILE-DB-SCHEMA-0001 | ER-MOD-DATABASE-0001 | [database/schema.sql](../database/schema.sql) | [schema.sql.docs.md](./source/schema.sql.docs.md) | Partial |
+
+| ER-FILE-AUTH-0001 | ER-MOD-AUTH-0001 | [server/src/auth.ts](../server/src/auth.ts) | [auth.ts.docs.md](./source/auth.ts.docs.md) | Implemented |
+| ER-FILE-AUTH-ROUTES-0001 | ER-MOD-AUTH-0001 | [server/src/auth-routes.ts](../server/src/auth-routes.ts) | [auth-routes.ts.docs.md](./source/auth-routes.ts.docs.md) | Partial |
+| ER-FILE-REALTIME-0001 | ER-MOD-REALTIME-0001 | [server/src/realtime.ts](../server/src/realtime.ts) | [realtime.ts.docs.md](./source/realtime.ts.docs.md) | Partial |
+| ER-FILE-SAVE-ROUTES-0001 | ER-MOD-PERSISTENCE-0001 | [server/src/save-routes.ts](../server/src/save-routes.ts) | [save-routes.ts.docs.md](./source/save-routes.ts.docs.md) | Partial |
+| ER-FILE-API-CLIENT-0001 | ER-MOD-NETWORK-0001 | [src/game/network/ApiClient.ts](../src/game/network/ApiClient.ts) | [ApiClient.ts.docs.md](./source/ApiClient.ts.docs.md) | Implemented |
+| ER-FILE-REALTIME-CLIENT-0001 | ER-MOD-NETWORK-0001 | [src/game/network/RealtimeClient.ts](../src/game/network/RealtimeClient.ts) | [RealtimeClient.ts.docs.md](./source/RealtimeClient.ts.docs.md) | Partial |
+| ER-FILE-VITE-CONFIG-0001 | ER-MOD-BUILD-0001 | [vite.config.ts](../vite.config.ts) | [vite.config.ts.docs.md](./source/vite.config.ts.docs.md) | Implemented |
