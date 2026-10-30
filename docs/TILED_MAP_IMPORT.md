@@ -33,4 +33,4 @@ The renderer currently uses the existing pixel-style glyph presentation. Actual 
 
 ## Included sample map
 
-An original metadata-based sample is available at [public/maps/starter-village.json](../public/maps/starter-village.json). It includes walkable grassland, blocked water/forest terrain, a collision boundary, a village elder, a keyed storehouse door, a talk-across marker, and a warp object. The sample has no third-party image atlas.
+Two original metadata-based sample maps are available: [starter-village.json](../public/maps/starter-village.json) and [north-road.json](../public/maps/north-road.json). Select both files in the title screen importer, keeping `starter-village.json` first. They contain reciprocal warp destinations. The village also includes a village elder, a keyed storehouse door, and a talk-across marker. Buy an Iron Key in the Shop to open the door. Neither sample requires a third-party image atlas.
