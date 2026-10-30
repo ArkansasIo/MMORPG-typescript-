@@ -1,9 +1,9 @@
 {
   "name":"earthbound-realms-server",
-  "version":"0.1.0",
+  "version":"0.2.0",
   "private":true,
   "type":"module",
   "scripts":{"dev":"tsx watch src/index.ts","build":"tsc --noEmit","start":"tsx src/index.ts"},
-  "dependencies":{"cors":"^2.8.5","dotenv":"^16.4.7","express":"^4.21.2","mysql2":"^3.12.0"},
-  "devDependencies":{"@types/cors":"^2.8.17","@types/express":"^5.0.0","@types/node":"^22.10.2","tsx":"^4.19.2","typescript":"^5.7.2"}
+  "dependencies":{"cors":"^2.8.5","dotenv":"^16.4.7","express":"^4.21.2","mysql2":"^3.12.0","ws":"^8.18.0"},
+  "devDependencies":{"@types/cors":"^2.8.17","@types/express":"^5.0.0","@types/node":"^22.10.2","@types/ws":"^8.5.13","tsx":"^4.19.2","typescript":"^5.7.2"}
 }
