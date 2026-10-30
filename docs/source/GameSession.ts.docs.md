@@ -17,7 +17,7 @@
 - Records visit objectives for visited coordinates, map exits, and NPC locations.
 - Registers and accepts quests using `QuestEngine`.
 - Grants completed quest XP and gold to the character and reports item reward IDs for a future item-definition resolver.
-- Exposes a detached session save snapshot containing character data, map ID, position, inventory stacks, and quest progress.
+- Exposes a detached session save snapshot containing character data, map ID, position, inventory stacks, and quest progress. `GameRuntime` extends this with the registered Tiled documents and opened-door state when applicable.
 
 ## Boundaries and next work
 
