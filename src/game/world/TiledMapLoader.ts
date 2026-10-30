@@ -147,7 +147,11 @@ export function loadTiledMap(input: unknown, options: { id: string; name: string
       const name = object.name?.trim();
       const npcType = typeof props.type === "string" ? props.type : "villager";
       if (!name) throw new Error(`NPC object ${id} requires a name`);
-      npcs.push({ id, name, ...position, npcType, dialogueId: name, wanders: props.wanders === true, direction: parseDirection(props.dir) });
+      const normalizedName = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+      const dialogueId = typeof props.dialogueId === "string" && props.dialogueId.trim()
+        ? props.dialogueId.trim()
+        : normalizedName.includes("elder") ? "meadow-elder" : normalizedName;
+      npcs.push({ id, name, ...position, npcType, dialogueId, wanders: props.wanders === true, direction: parseDirection(props.dir) });
     } else if (type === "door") {
       if (!Number.isInteger(props.replacementTileIndex) || Number(props.replacementTileIndex) < 0) {
         throw new Error(`Door object ${id} requires replacementTileIndex`);
