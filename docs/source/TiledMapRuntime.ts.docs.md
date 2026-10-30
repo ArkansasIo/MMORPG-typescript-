@@ -20,6 +20,7 @@ Expose runtime operations over a parsed Tiled map without coupling Tiled parsing
 - `openDoorInFrontOf(position, direction, consumeKey)` — attempt to open the facing-adjacent door; does not consume a key when no door is present.
 - `tileGidAt(position, layer)` — read ground or overlay visual GID.
 - `openedDoorIds` — snapshot of opened door IDs.
+- `restoreOpenedDoors(ids)` — restore known opened-door IDs without consuming player inventory; unknown IDs are rejected.
 
 ## Tests
 
