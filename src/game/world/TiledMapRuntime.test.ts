@@ -30,6 +30,15 @@ describe("TiledMapRuntime", () => {
     expect(runtime.encounterTableAt({ x: 1, y: 0 })).toBe("9");
   });
 
+  it("finds NPCs and doors relative to the player's facing direction", () => {
+    const runtime = new TiledMapRuntime(source);
+    expect(runtime.npcInFrontOf({ x: 0, y: 1 }, "north")?.name).toBe("Guard");
+    expect(runtime.npcInFrontOf({ x: 0, y: 1 }, "east")).toBeUndefined();
+    expect(runtime.doorInFrontOf({ x: 1, y: 0 }, "south")?.id).toBe("3");
+    expect(runtime.doorInFrontOf({ x: 0, y: 1 }, "east")?.id).toBe("3");
+    expect(runtime.doorAt({ x: 1, y: 1 })?.replacementTileIndex).toBe(7);
+  });
+
   it("opens a keyed door once and updates the visual tile GID", () => {
     const runtime = new TiledMapRuntime(source);
     const consumeKey = vi.fn(() => true);
@@ -47,7 +56,8 @@ describe("TiledMapRuntime", () => {
     const consumeKey = vi.fn(() => false);
     expect(runtime.openDoor("missing", consumeKey)).toBe(false);
     expect(runtime.openDoor("3", consumeKey)).toBe(false);
-    expect(consumeKey).toHaveBeenCalledTimes(1);
+    expect(runtime.openDoorInFrontOf({ x: 0, y: 1 }, "east", consumeKey)).toBe(false);
+    expect(consumeKey).toHaveBeenCalledTimes(2);
   });
 
   it("retains optional overlay layer GIDs and rejects out-of-bounds access", () => {
