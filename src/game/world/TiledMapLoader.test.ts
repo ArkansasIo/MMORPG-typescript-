@@ -41,7 +41,7 @@ describe("loadTiledMap", () => {
   it("loads warps, NPCs, doors, talk-across objects and map metadata", () => {
     const result = loadTiledMap(fixture, { id: "test-map", name: "Test Map" });
     expect(result.warps[0]).toMatchObject({ targetMapId: "town-square", targetX: 2, targetY: 1, direction: "west" });
-    expect(result.npcs[0]).toMatchObject({ name: "Village Elder", dialogueId: "Village Elder", npcType: "elder" });
+    expect(result.npcs[0]).toMatchObject({ name: "Village Elder", dialogueId: "meadow-elder", npcType: "elder" });
     expect(result.doors[0]).toMatchObject({ replacementTileIndex: 3, x: 0, y: 1 });
     expect(result.talkAcross).toEqual([{ x: 1, y: 0 }]);
     expect(result.logicFile).toBe("meadow.ts");
