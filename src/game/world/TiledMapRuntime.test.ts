@@ -7,6 +7,7 @@ const source = loadTiledMap({
   tilesets: [{ firstgid: 1, tiles: [{ id: 0, properties: [{ name: "kind", value: "grass" }] }] }],
   layers: [
     { name: "tileLayer", type: "tilelayer", data: [1, 1, 1, 1] },
+    { name: "collisionLayer", type: "tilelayer", data: [0, 0, 0, 1] },
     { name: "tileLayer2", type: "tilelayer", data: [0, 0, 1, 0] },
     { name: "enemyTerritoryLayer", type: "tilelayer", data: [0, 9, 0, 0] },
     { name: "warps", type: "objectgroup", objects: [{ id: 1, type: "warp", x: 16, y: 0, properties: [
