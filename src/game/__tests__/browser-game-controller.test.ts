@@ -67,3 +67,12 @@ describe("BrowserGameController", () => {
     hero.gold = 0;
     expect(controller.buyItem("iron-sword", 1)).toBe(false);
   });
+
+  it("gathers finite resource nodes and advances collect quest progress", () => {
+    const controller = new BrowserGameController(new MemoryStorage());
+    controller.startNew({ seed: 55, characterName: "Mira", characterClass: "Cleric", characterId: "mira" });
+    const result = controller.gatherResource("meadow-herb-patch");
+    expect(result.success).toBe(true);
+    expect(controller.game.session.inventory.quantity("healing-herb")).toBe(6);
+    expect(controller.listResourceNodes().find(node => node.id === "meadow-herb-patch")?.remaining).toBe(6);
+  });
