@@ -36,7 +36,7 @@ The current `src/main.ts` delegates state to `BrowserGameController` and `GameRu
 - Original 8-bit sprites, sound effects, and 24 music tracks.
 - Online multiplayer with server-authoritative state, accounts, parties, and instance sessions.
 
-These are targets, not completed content. The current map is schematic and is not a real Earth map. The online menu entry checks for a local API, but actual authentication, WebSocket multiplayer, and shared online sessions are not implemented yet.
+These are targets, not completed content. The current map is schematic and is not a real Earth map. The backend now provides account registration/login, authenticated cloud-save endpoints, and an authenticated ephemeral WebSocket room relay. The browser game UI is not yet wired to those services, and shared persistent worlds, server-authoritative combat, parties, and cross-process room coordination remain unfinished.
 
 ## Requirements
 - Node.js 20 or later
@@ -121,7 +121,7 @@ The browser prototype still has a relatively large `src/main.ts` composition fil
 - [MySQL schema](database/schema.sql) and [backend setup](server/README.md)
 
 ### Start the backend
-From repository root, copy `.env.example` to `.env`, set your MySQL credentials, then initialize the schema with `mysql -u root -p < database/schema.sql`. In a separate terminal run `cd server && npm install && npm run dev`. The guest endpoint is a basic stored profile, not an authentication system. Online multiplayer, account authentication, and authoritative combat still require implementation.
+From repository root, copy `.env.example` to `.env`, set your MySQL credentials, then initialize the schema with `mysql -u root -p < database/schema.sql`. In a separate terminal run `cd server && npm install && npm run dev`. The guest endpoint is a basic stored profile, not an authentication system. The room relay and account API are early integration foundations; the browser UI still needs to connect them, and authoritative combat remains unimplemented.
 
 
 ### Integrated gameplay modules
