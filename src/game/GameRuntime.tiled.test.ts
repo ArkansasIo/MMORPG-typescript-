@@ -40,7 +40,7 @@ describe("GameRuntime Tiled integration", () => {
 
   it("rejects a spawn on a blocked tile", () => {
     const blocked = structuredClone(mapDocument);
-    blocked.layers[1].data[4] = 1;
+    blocked.layers[1].data![4] = 1;
     expect(() => GameRuntime.createFromTiledMap({
       seed: 1,
       characterName: "Ada",
