@@ -6,6 +6,7 @@
 import "./style.css";
 import { BrowserGameController } from "./game/BrowserGameController";
 import type { CharacterClass } from "./game/types";
+import { loadTiledMap, type TiledMapDocument } from "./game/world/TiledMapLoader";
 import type { Direction } from "./game/world/CollisionSystem";
 
 const app = document.querySelector<HTMLDivElement>("#app");
@@ -34,9 +35,29 @@ function titleScreen(): void {
     <label for="hero-name">Character name</label><input id="hero-name" maxlength="24" value="Wayfarer" />
     <label for="hero-class">Class</label><select id="hero-class">${classes.map(name => `<option value="${name}">${name}</option>`).join("")}</select>
     <label for="world-seed">World seed (integer)</label><input id="world-seed" type="number" value="2026" />
-    <button id="new-game">▶ START A NEW QUEST</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>▶ CONTINUE YOUR QUEST</button>
+    <label for="tiled-map-file">Or load a Tiled JSON map</label><input id="tiled-map-file" type="file" accept=".json,application/json" />\n    <button id="load-tiled-map">▶ START ON IMPORTED MAP</button><button id="new-game">▶ START A NEW QUEST</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>▶ CONTINUE YOUR QUEST</button>
     <p class="title-note">Local prototype · Keyboard · Mouse · Gamepad-ready controls</p>
   </div></div>`;
+  app!.querySelector<HTMLButtonElement>("#load-tiled-map")!.onclick = async () => {
+    const file = app!.querySelector<HTMLInputElement>("#tiled-map-file")!.files?.[0];
+    if (!file) { alert("Choose a Tiled JSON map file first."); return; }
+    try {
+      const document = JSON.parse(await file.text()) as TiledMapDocument;
+      const id = file.name.replace(/\\.json$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "") || "imported-map";
+      const loaded = loadTiledMap(document, { id, name: file.name.replace(/\\.json$/i, "") || "Imported Map" });
+      const spawnIndex = loaded.map.data.tiles.findIndex(tile => !tile.blocked);
+      if (spawnIndex < 0) throw new Error("This map has no walkable spawn tile.");
+      const spawn = { x: spawnIndex % loaded.map.width, y: Math.floor(spawnIndex / loaded.map.width) };
+      const name = (app!.querySelector<HTMLInputElement>("#hero-name")!.value || "Wayfarer").trim().slice(0, 24) || "Wayfarer";
+      const characterClass = app!.querySelector<HTMLSelectElement>("#hero-class")!.value as CharacterClass;
+      const seed = Number(app!.querySelector<HTMLInputElement>("#world-seed")!.value);
+      if (!Number.isSafeInteger(seed)) throw new Error("Enter a valid whole-number world seed.");
+      controller.startTiledMap({ seed, characterName: name, characterClass, mapId: id, mapName: loaded.map.data.name, document, spawn });
+      activeDialogue = undefined; battleMessage = ""; log = `Loaded Tiled map: ${loaded.map.data.name}`; selectedTab = "Character"; gameStarted = true; render();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Could not import this Tiled map.");
+    }
+  };
   app!.querySelector<HTMLButtonElement>("#new-game")!.onclick = () => {
     const name = (app!.querySelector<HTMLInputElement>("#hero-name")!.value || "Wayfarer").trim().slice(0, 24) || "Wayfarer";
     const characterClass = app!.querySelector<HTMLSelectElement>("#hero-class")!.value as CharacterClass;
@@ -89,7 +110,7 @@ function tabContent(): string {
     }).join("");
   }
   if (selectedTab === "World Map") {
-    return `<p>Seed: <code>${escapeHtml(session.map.data.id.replace("starter-region-", ""))}</code></p><p>Region size: ${session.map.width} × ${session.map.height} tiles.</p><p>The map is procedurally generated and deterministic for the same seed.</p>`;
+    return `<p>Map: <b>${escapeHtml(session.map.data.name)}</b></p><p>Map ID: <code>${escapeHtml(session.map.data.id)}</code></p><p>Region size: ${session.map.width} × ${session.map.height} tiles.</p>${game.tiledWorld ? `<p>Authored Tiled map · ${game.tiledWorld.warps.length} warps · ${game.tiledWorld.npcs.length} NPCs · ${game.tiledWorld.doors.length} doors</p>` : "<p>Procedurally generated and deterministic for the same seed.</p>"}`;
   }
   if (selectedTab === "Codex") {
     return `<p>Known creatures: Meadow Slime, Grey Wolf, Roadside Skeleton.</p><p>Combat uses turn order, attack rolls, defense, damage types, XP, gold, and loot.</p>`;
@@ -134,12 +155,12 @@ function render(): void {
   app!.innerHTML = `<header><div class="brand"><span>✦</span><div><b>EARTHBOUND REALMS</b><small>TYPE SCRIPT RPG · PLAYABLE PROTOTYPE</small></div></div><div class="topbuttons"><span>Seeded world</span><button id="save-game">Save</button><button id="main-menu">Main menu</button></div></header>
   <nav>${["Character", "Inventory", "Shop", "Crafting", "Quests", "World Map", "Codex"].map(tab => `<button data-tab="${tab}" class="${selectedTab === tab ? "active" : ""}">${tab}</button>`).join("")}</nav>
   <main><aside class="panel"><h3>STATUS</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
-  <section><div class="panel maphead"><div><h3>WORLD OF ADVENTURE</h3><h1>The Alefgard Frontier</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
+  <section><div class="panel maphead"><div><h3>WORLD OF ADVENTURE</h3><h1>${escapeHtml(map.data.name)}</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
   <div class="mapwrap"><div class="map" style="--scale:${zoom};grid-template-columns:repeat(${map.width},24px);grid-template-rows:repeat(${map.height},24px);">${cells}</div></div>
   <div class="legend">≈ Water · ♠ Forest · ▲ Mountains · ⌂ Town · @ You</div>
   <div class="panel"><h3>${status === "active" ? "COMBAT / ADVENTURE LOG" : "ADVENTURE LOG"}</h3><p>${escapeHtml(log)}</p><div class="dpad"><span>Move:</span><button data-move="north">↑</button><button data-move="west">←</button><button data-move="south">↓</button><button data-move="east">→</button></div></div>
   ${battlePanel()}${dialoguePanel()}<div class="panel"><h3>${escapeHtml(selectedTab.toUpperCase())}</h3><div id="tab-content">${tabContent()}</div></div></section>
-  <aside class="panel"><h3>FIELD NOTES</h3><p><small>REGION</small><br><b>Old World Frontier</b></p><p><small>COORDINATES</small><br><b>${position.x}, ${position.y}</b></p><p><small>WORLD SEED</small><br><code>${escapeHtml(map.data.id.replace("starter-region-", ""))}</code></p><hr><h3>DISCOVERIES</h3><p>Explore the region, accept quests, defeat creatures, collect rewards, and save your progress.</p><hr><h3>PROGRESSION</h3><p>Equipment bonus: +${equipment.attackBonus} attack, +${equipment.defense} defense.</p><p class="hint">Online multiplayer is not enabled in this prototype.</p></aside></main><footer>Earthbound Realms · Local save slots · Prototype build ER-TS-MMORPG-0.1.0</footer>`;
+  <aside class="panel"><h3>FIELD NOTES</h3><p><small>REGION</small><br><b>${escapeHtml(map.data.name)}</b></p><p><small>COORDINATES</small><br><b>${position.x}, ${position.y}</b></p><p><small>WORLD SEED</small><br><code>${escapeHtml(map.data.id.replace("starter-region-", ""))}</code></p><hr><h3>DISCOVERIES</h3><p>Explore the region, accept quests, defeat creatures, collect rewards, and save your progress.</p><hr><h3>PROGRESSION</h3><p>Equipment bonus: +${equipment.attackBonus} attack, +${equipment.defense} defense.</p><p class="hint">Online multiplayer is not enabled in this prototype.</p></aside></main><footer>Earthbound Realms · Local save slots · Prototype build ER-TS-MMORPG-0.1.0</footer>`;
 
   app!.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach(button => button.onclick = () => { selectedTab = button.dataset.tab!; render(); });
   app!.querySelectorAll<HTMLButtonElement>("[data-move]").forEach(button => button.onclick = () => move(button.dataset.move as Direction));
