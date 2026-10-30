@@ -38,3 +38,6 @@ IDs are stable and must never be reused. Planned entries must explicitly say Pla
 | ER-FILE-API-CLIENT-0001 | ER-MOD-NETWORK-0001 | [src/game/network/ApiClient.ts](../src/game/network/ApiClient.ts) | [ApiClient.ts.docs.md](./source/ApiClient.ts.docs.md) | Implemented |
 | ER-FILE-REALTIME-CLIENT-0001 | ER-MOD-NETWORK-0001 | [src/game/network/RealtimeClient.ts](../src/game/network/RealtimeClient.ts) | [RealtimeClient.ts.docs.md](./source/RealtimeClient.ts.docs.md) | Partial |
 | ER-FILE-VITE-CONFIG-0001 | ER-MOD-BUILD-0001 | [vite.config.ts](../vite.config.ts) | [vite.config.ts.docs.md](./source/vite.config.ts.docs.md) | Implemented |
+
+| ER-FILE-TILED-MAP-LOADER-0001 | ER-MOD-WORLD-0001 | [TiledMapLoader.ts](../src/game/world/TiledMapLoader.ts) | [TiledMapLoader.ts.docs.md](./source/TiledMapLoader.ts.docs.md) | Implemented |
+| ER-FILE-TILED-MAP-RUNTIME-0001 | ER-MOD-WORLD-0001 | [TiledMapRuntime.ts](../src/game/world/TiledMapRuntime.ts) | [TiledMapRuntime.ts.docs.md](./source/TiledMapRuntime.ts.docs.md) | Implemented |
