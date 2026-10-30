@@ -35,3 +35,6 @@ The title screen accepts multiple Tiled JSON files: the first selected file is t
 - `listResourceNodes()` exposes cloned node status for the UI.
 - `gatherResource(nodeId, hasTool?)` gathers into the active session inventory and records successful quantities against collect quest objectives.
 - Node state is currently in-memory only; save persistence is a known limitation.
+
+## Gathering persistence
+The controller snapshots finite resource-node reserves into the save payload. Continuing a game restores node reserves after the runtime is reconstructed. Older saves without this optional field retain starter node reserves.
