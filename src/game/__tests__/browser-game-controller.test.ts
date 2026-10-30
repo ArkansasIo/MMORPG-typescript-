@@ -76,3 +76,14 @@ describe("BrowserGameController", () => {
     expect(controller.game.session.inventory.quantity("healing-herb")).toBe(6);
     expect(controller.listResourceNodes().find(node => node.id === "meadow-herb-patch")?.remaining).toBe(6);
   });
+
+it('persists depleted resource nodes when continuing a saved game', () => {
+  const storage = new MemoryStorage();
+  const first = new BrowserGameController(storage);
+  first.startNew({ seed: 55, characterName: 'Mira', characterClass: 'Cleric', characterId: 'mira' });
+  first.gatherResource('meadow-herb-patch');
+  first.saveGame('main');
+  const resumed = new BrowserGameController(storage);
+  resumed.continueGame('main');
+  expect(resumed.listResourceNodes().find(node => node.id === 'meadow-herb-patch')?.remaining).toBe(6);
+});
