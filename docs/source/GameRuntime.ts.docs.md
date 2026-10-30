@@ -17,7 +17,7 @@
 
 ## Current boundaries
 
-This runtime is not yet the browser UI's sole state owner. The legacy `src/main.ts` still maintains separate prototype state, so the next integration step is to migrate the UI to this runtime and remove duplicated combat/inventory state. Save snapshots also need a restore API and server-side persistence before they can be used as production saves.
+This runtime is not yet the browser UI's sole state owner. The legacy `src/main.ts` still maintains separate prototype state, so the next integration step is to migrate the UI to this runtime and remove duplicated combat/inventory state. Save snapshots are local client data; server-side persistence and server-authoritative validation are still required for production multiplayer.
 
 
 ## Tiled map integration
@@ -28,4 +28,4 @@ The browser facade exposes the same capability through `BrowserGameController.st
 
 ## Current limitations
 
-Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering and save restoration for Tiled map IDs remain future work. `lastWarpResolution` records ready, missing-map, or blocked-destination results. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
+Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering remains future work. `save()` stores the registered map documents and opened-door IDs; `restore()` reconstructs the registry and resumes on the saved active map. `lastWarpResolution` records ready, missing-map, or blocked-destination results. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
