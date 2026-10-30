@@ -41,3 +41,15 @@ describe("GatheringService", () => {
     expect(service.listNodes()[0].remaining).toBe(7);
   });
 });
+
+  it('snapshots and restores reserves while rejecting malformed state', () => {
+    const service = setup();
+    const inventory = new Inventory();
+    service.gather('patch', inventory);
+    const snapshot = service.snapshot();
+    const restored = setup();
+    restored.restore(snapshot);
+    expect(restored.listNodes()[0].remaining).toBe(1);
+    expect(() => restored.restore([{ id: 'unknown', remaining: 0 }])).toThrow();
+    expect(() => restored.restore([{ id: 'patch', remaining: 4 }])).toThrow(/invalid reserves/);
+  });
