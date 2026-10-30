@@ -2,7 +2,7 @@
 -- @module-id ER-MOD-DATABASE-0001
 -- @doc ../docs/source/schema.sql.docs.md
 -- @master-doc ../docs/MASTER_DOCUMENTATION.md
--- Purpose: baseline persistent schema for the Earthbound Realms prototype.
+-- Purpose: persistent player, account, save, quest, and world data.
 CREATE DATABASE IF NOT EXISTS earthbound_realms CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE earthbound_realms;
 CREATE TABLE IF NOT EXISTS players (
@@ -15,6 +15,14 @@ CREATE TABLE IF NOT EXISTS players (
  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
  updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
  INDEX idx_players_display_name(display_name)
+);
+CREATE TABLE IF NOT EXISTS accounts (
+ id CHAR(36) PRIMARY KEY,
+ email VARCHAR(254) NOT NULL UNIQUE,
+ password_hash VARCHAR(255) NOT NULL,
+ player_id CHAR(36) NOT NULL UNIQUE,
+ created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ CONSTRAINT fk_accounts_player FOREIGN KEY(player_id) REFERENCES players(id) ON DELETE CASCADE
 );
 CREATE TABLE IF NOT EXISTS world_seeds (
  seed_key VARCHAR(64) PRIMARY KEY,
