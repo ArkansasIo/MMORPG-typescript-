@@ -15,6 +15,10 @@ This project contains an original TypeScript Tiled JSON adapter at `src/game/wor
 
 `TiledMapRuntime` exposes tile lookups for NPCs, doors, warps, talk-across markers, encounter groups, and visual GIDs. Directional helpers `npcInFrontOf(position, direction)` and `doorInFrontOf(position, direction)` resolve entities in the adjacent tile the player faces. `openDoorInFrontOf` opens a matching adjacent door, consumes a key only after a door is found, and updates both its visual GID and collision state. These are domain APIs; browser controls are not yet wired to them.
 
+## Cross-map warp catalog
+
+`TiledWorldRegistry` registers loaded authored maps and resolves a warp at a source coordinate. It distinguishes a missing target map from a blocked or out-of-bounds arrival tile, and returns a validated target runtime plus arrival coordinate when ready. It does not yet replace the active `GameSession` map or trigger transitions from browser movement.
+
 ## Tileset properties and coordinates
 
 Tile definitions can declare `kind` or `terrain` (one of the project's TileKind values), `blocked` (boolean), and `encounterTableId`. Unrecognized tile kinds default to grass; water, mountains, and walls are blocked by default.
