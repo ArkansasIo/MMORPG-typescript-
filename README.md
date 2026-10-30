@@ -227,3 +227,10 @@ Quest item rewards are granted only when their item definitions have been regist
 ## Backend account, cloud-save, and realtime services
 
 The API now includes account registration/login with scrypt password hashes and one-hour signed bearer tokens, authenticated profile lookup, versioned cloud-save endpoints, and an authenticated WebSocket room relay. The relay supports ephemeral room membership and validated one-tile movement broadcasts; it is not yet a persistent authoritative MMO simulation. Configure `AUTH_SECRET` in `.env` before starting the API and initialize the updated MySQL schema. See [Backend API and Realtime Service](docs/server/README.md) for endpoint contracts and limitations.
+
+
+## Import an authored Tiled map
+
+The title screen now supports importing an authored Tiled JSON map. Choose **Or load a Tiled JSON map**, select a map exported from Tiled, and press **Start on Imported Map**. The game validates the document and places the character on the first walkable tile.
+
+A small original example map is included at [public/maps/starter-village.json](public/maps/starter-village.json). See [Tiled map import documentation](docs/TILED_MAP_IMPORT.md) for supported layers, tile properties, and current limitations. The current renderer displays imported terrain using its native pixel glyph palette; it does not yet draw external Tiled tileset image atlases or the optional overlay layer.
