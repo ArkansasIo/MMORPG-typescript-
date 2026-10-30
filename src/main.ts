@@ -20,6 +20,7 @@ let zoom = 1;
 let activeDialogue: { treeId: string; nodeId: string; speaker: string; text: string; choices: { id: string; text: string }[] } | undefined;
 let battleMessage = "";
 let gameStarted = false;
+let facingDirection: Direction = "south";
 
 const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
@@ -35,24 +36,30 @@ function titleScreen(): void {
     <label for="hero-name">Character name</label><input id="hero-name" maxlength="24" value="Wayfarer" />
     <label for="hero-class">Class</label><select id="hero-class">${classes.map(name => `<option value="${name}">${name}</option>`).join("")}</select>
     <label for="world-seed">World seed (integer)</label><input id="world-seed" type="number" value="2026" />
-    <label for="tiled-map-file">Or load a Tiled JSON map</label><input id="tiled-map-file" type="file" accept=".json,application/json" />\n    <button id="load-tiled-map">▶ START ON IMPORTED MAP</button><button id="new-game">▶ START A NEW QUEST</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>▶ CONTINUE YOUR QUEST</button>
+    <label for="tiled-map-file">Or load a Tiled JSON map</label><input id="tiled-map-file" type="file" accept=".json,application/json" multiple />\n    <button id="load-tiled-map">▶ START ON IMPORTED MAP</button><button id="new-game">▶ START A NEW QUEST</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>▶ CONTINUE YOUR QUEST</button>
     <p class="title-note">Local prototype · Keyboard · Mouse · Gamepad-ready controls</p>
   </div></div>`;
   app!.querySelector<HTMLButtonElement>("#load-tiled-map")!.onclick = async () => {
-    const file = app!.querySelector<HTMLInputElement>("#tiled-map-file")!.files?.[0];
-    if (!file) { alert("Choose a Tiled JSON map file first."); return; }
+    const files = [...(app!.querySelector<HTMLInputElement>("#tiled-map-file")!.files ?? [])];
+    if (!files.length) { alert("Choose one or more Tiled JSON map files first."); return; }
     try {
-      const document = JSON.parse(await file.text()) as TiledMapDocument;
-      const id = file.name.replace(/\.json$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "") || "imported-map";
-      const loaded = loadTiledMap(document, { id, name: file.name.replace(/\.json$/i, "") || "Imported Map" });
+      const imported = await Promise.all(files.map(async file => {
+        const document = JSON.parse(await file.text()) as TiledMapDocument;
+        const mapId = file.name.replace(/\.json$/i, "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-|-$/g, "") || "imported-map";
+        const mapName = file.name.replace(/\.json$/i, "") || "Imported Map";
+        return { document, mapId, mapName };
+      }));
+      const primary = imported[0];
+      const loaded = loadTiledMap(primary.document, { id: primary.mapId, name: primary.mapName });
       const spawnIndex = loaded.map.data.tiles.findIndex(tile => !tile.blocked);
-      if (spawnIndex < 0) throw new Error("This map has no walkable spawn tile.");
+      if (spawnIndex < 0) throw new Error("The first map has no walkable spawn tile.");
       const spawn = { x: spawnIndex % loaded.map.width, y: Math.floor(spawnIndex / loaded.map.width) };
       const name = (app!.querySelector<HTMLInputElement>("#hero-name")!.value || "Wayfarer").trim().slice(0, 24) || "Wayfarer";
       const characterClass = app!.querySelector<HTMLSelectElement>("#hero-class")!.value as CharacterClass;
       const seed = Number(app!.querySelector<HTMLInputElement>("#world-seed")!.value);
       if (!Number.isSafeInteger(seed)) throw new Error("Enter a valid whole-number world seed.");
-      controller.startTiledMap({ seed, characterName: name, characterClass, mapId: id, mapName: loaded.map.data.name, document, spawn });
+      controller.startTiledMap({ seed, characterName: name, characterClass, mapId: primary.mapId, mapName: primary.mapName, document: primary.document, spawn,
+        additionalMaps: imported.slice(1).map(({ document, mapId, mapName }) => ({ document, mapId, mapName })) });
       activeDialogue = undefined; battleMessage = ""; log = `Loaded Tiled map: ${loaded.map.data.name}`; selectedTab = "Character"; gameStarted = true; render();
     } catch (error) {
       alert(error instanceof Error ? error.message : "Could not import this Tiled map.");
@@ -154,7 +161,7 @@ function render(): void {
   const status = game.battles.currentBattle?.status;
   app!.innerHTML = `<header><div class="brand"><span>✦</span><div><b>EARTHBOUND REALMS</b><small>TYPE SCRIPT RPG · PLAYABLE PROTOTYPE</small></div></div><div class="topbuttons"><span>Seeded world</span><button id="save-game">Save</button><button id="main-menu">Main menu</button></div></header>
   <nav>${["Character", "Inventory", "Shop", "Crafting", "Quests", "World Map", "Codex"].map(tab => `<button data-tab="${tab}" class="${selectedTab === tab ? "active" : ""}">${tab}</button>`).join("")}</nav>
-  <main><aside class="panel"><h3>STATUS</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
+  <main><aside class="panel"><h3>STATUS</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="interact">Interact with NPC (E)</button><button class="wide" id="open-door">Open facing door (F)</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
   <section><div class="panel maphead"><div><h3>WORLD OF ADVENTURE</h3><h1>${escapeHtml(map.data.name)}</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
   <div class="mapwrap"><div class="map" style="--scale:${zoom};grid-template-columns:repeat(${map.width},24px);grid-template-rows:repeat(${map.height},24px);">${cells}</div></div>
   <div class="legend">≈ Water · ♠ Forest · ▲ Mountains · ⌂ Town · @ You</div>
@@ -174,6 +181,8 @@ function render(): void {
   app!.querySelector<HTMLButtonElement>("#main-menu")!.onclick = titleScreen;
   app!.querySelector<HTMLButtonElement>("#rest")!.onclick = () => { character.heal(character.maxHp); log = "You rest and recover your health."; render(); };
   app!.querySelector<HTMLButtonElement>("#search")!.onclick = () => startEncounter();
+  app!.querySelector<HTMLButtonElement>("#interact")!.onclick = () => interactWithNpc();
+  app!.querySelector<HTMLButtonElement>("#open-door")!.onclick = () => openFacingDoor();
   app!.querySelector<HTMLButtonElement>("#talk-elder")!.onclick = () => {
     try {
       const reply = controller.beginDialogue("meadow-elder");
@@ -231,9 +240,35 @@ function render(): void {
 }
 
 function move(direction: Direction): void {
+  facingDirection = direction;
   if (controller.game.battles.currentBattle?.status === "active") { log = "Finish or flee the battle before moving."; render(); return; }
   const moved = controller.move(direction);
-  log = moved ? "You travel along the frontier." : "Blocked terrain prevents movement.";
+  const warp = controller.game.lastWarpResolution;
+  if (!moved) log = "Blocked terrain prevents movement."; 
+  else if (warp?.status === "ready") log = "You travel through the passage to " + controller.game.session.map.data.name + ".";
+  else if (warp?.status === "missing-map") log = "This passage leads to an unregistered map: " + warp.targetMapId + ". Load that map with the others.";
+  else if (warp?.status === "blocked-destination") log = "The passage to " + warp.targetMapId + " is blocked at " + warp.position.x + ", " + warp.position.y + ".";
+  else log = "You travel along the frontier.";
+  render();
+}
+
+function interactWithNpc(): void {
+  const result = controller.beginFacingNpcDialogue(facingDirection);
+  if (!result?.dialogue) {
+    log = result ? result.npc.name + " has no available dialogue." : "There is no one directly ahead to speak with."; 
+    render();
+    return;
+  }
+  const npc = result.npc;
+  const dialogue = result.dialogue;
+  activeDialogue = { treeId: npc.dialogueId, nodeId: dialogue.node.id, speaker: dialogue.node.speaker, text: dialogue.node.text, choices: dialogue.choices };
+  log = "Speaking with " + npc.name + ".";
+  render();
+}
+
+function openFacingDoor(): void {
+  const opened = controller.openFacingDoor(facingDirection, () => controller.game.session.inventory.remove("iron-key", 1));
+  log = opened ? "The door unlocks and swings open." : "No door is directly ahead, or you need an Iron Key.";
   render();
 }
 
@@ -287,6 +322,8 @@ document.addEventListener("keydown", event => {
   const directions: Record<string, Direction> = { ArrowUp: "north", w: "north", W: "north", ArrowDown: "south", s: "south", S: "south", ArrowLeft: "west", a: "west", A: "west", ArrowRight: "east", d: "east", D: "east" };
   const direction = directions[event.key];
   if (direction) { event.preventDefault(); move(direction); }
+  else if ((event.key === "e" || event.key === "E") && !activeDialogue) { event.preventDefault(); interactWithNpc(); }
+  else if ((event.key === "f" || event.key === "F") && !activeDialogue) { event.preventDefault(); openFacingDoor(); }
   else if (event.key === "Escape" && activeDialogue) { activeDialogue = undefined; render(); }
 });
 window.addEventListener("gamepadconnected", () => { log = "Gamepad connected. Use the D-pad or keyboard controls."; if (gameStarted) render(); });
