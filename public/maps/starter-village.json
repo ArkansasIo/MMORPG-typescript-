@@ -428,6 +428,11 @@
               "name": "dir",
               "type": "string",
               "value": "south"
+            },
+            {
+              "name": "dialogueId",
+              "type": "string",
+              "value": "meadow-elder"
             }
           ]
         },
