@@ -1,6 +1,8 @@
 /**
  * @file-id ER-FILE-TILED-MAP-LOADER-0001
  * @module-id ER-MOD-WORLD-0001
+ * @doc ../../../docs/source/TiledMapLoader.ts.docs.md
+ * @master-doc ../../../docs/MASTER_DOCUMENTATION.md
  * Converts Tiled JSON maps into the validated Earthbound Realms world model.
  * This is an original TypeScript adapter; it does not copy DragonWarriorJS source.
  */
@@ -66,11 +68,12 @@ function parseDirection(value: TiledPropertyValue | undefined): TiledNpc["direct
     ? value.toLowerCase() as TiledNpc["direction"] : undefined;
 }
 function tileProperties(gid: number, tilesets: TiledTileset[]): Record<string, TiledPropertyValue> {
-  if (gid <= 0) return {};
+  const cleanGid = (gid >>> 0) & 0x1fffffff; // Strip Tiled horizontal/vertical/diagonal flip flags.
+  if (cleanGid <= 0) return {};
   let selected: TiledTileset | undefined;
-  for (const tileset of tilesets) if (tileset.firstgid <= gid && (!selected || tileset.firstgid > selected.firstgid)) selected = tileset;
+  for (const tileset of tilesets) if (tileset.firstgid <= cleanGid && (!selected || tileset.firstgid > selected.firstgid)) selected = tileset;
   if (!selected) return {};
-  const tile = selected.tiles?.find(entry => entry.id === gid - selected!.firstgid);
+  const tile = selected.tiles?.find(entry => entry.id === cleanGid - selected!.firstgid);
   return properties(tile?.properties);
 }
 function terrainKind(gid: number, tilesets: TiledTileset[]): TileKind {
@@ -136,7 +139,7 @@ export function loadTiledMap(input: unknown, options: { id: string; name: string
       const targetMapId = props.map;
       const targetX = props.col;
       const targetY = props.row;
-      if (typeof targetMapId !== "string" || !Number.isInteger(targetX) || !Number.isInteger(targetY)) {
+      if (typeof targetMapId !== "string" || !targetMapId.trim() || !Number.isSafeInteger(targetX) || !Number.isSafeInteger(targetY) || Number(targetX) < 0 || Number(targetY) < 0) {
         throw new Error(`Warp object ${id} requires map, col, and row properties`);
       }
       warps.push({ id, ...position, targetMapId, targetX: Number(targetX), targetY: Number(targetY), direction: parseDirection(props.dir) });
@@ -149,6 +152,7 @@ export function loadTiledMap(input: unknown, options: { id: string; name: string
       if (!Number.isInteger(props.replacementTileIndex) || Number(props.replacementTileIndex) < 0) {
         throw new Error(`Door object ${id} requires replacementTileIndex`);
       }
+      if (position.x < 0 || position.y < 0 || position.x >= document.width || position.y >= document.height) throw new Error(`Door object ${id} is outside the map`);
       doors.push({ id, ...position, replacementTileIndex: Number(props.replacementTileIndex) });
     } else if (type === "talkacross") {
       talkAcross.push(position);
