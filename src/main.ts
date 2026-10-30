@@ -3,6 +3,7 @@
  * @module-id ER-MOD-CLIENT-0001
  * Browser UI composition root. All game state and domain rules live in BrowserGameController/GameRuntime.
  */
+import "./style.css";
 import { BrowserGameController } from "./game/BrowserGameController";
 import type { CharacterClass } from "./game/types";
 import type { Direction } from "./game/world/CollisionSystem";
@@ -22,18 +23,18 @@ let gameStarted = false;
 const escapeHtml = (value: string): string => value.replace(/[&<>"']/g, char => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 })[char]!);
-const tileGlyph: Record<string, string> = { grass: "·", forest: "♣", water: "≈", mountain: "▲", town: "⌂", wall: "▧", floor: "·", door: "▯" };
+const tileGlyph: Record<string, string> = { grass: "·", forest: "♠", water: "≈", mountain: "▲", town: "⌂", wall: "▓", floor: "·", door: "▣" };
 const tileClass: Record<string, string> = { grass: "grass", forest: "forest", water: "water", mountain: "mountain", town: "town", wall: "mountain", floor: "grass", door: "town" };
 
 function titleScreen(): void {
   gameStarted = false;
   app!.innerHTML = `<div class="title-overlay"><div class="title-card">
-    <div class="title-mark">✦</div><p class="eyebrow">BUILD ER-TS-MMORPG-0.1.0</p>
-    <h1>EARTHBOUND<br>REALMS</h1><p class="subtitle">A retro fantasy adventure</p>
+    <div class="title-mark">★</div><p class="eyebrow">A 8-BIT FANTASY ADVENTURE</p>
+    <h1>EARTHBOUND<br>REALMS</h1><p class="subtitle">The adventure begins...</p>
     <label for="hero-name">Character name</label><input id="hero-name" maxlength="24" value="Wayfarer" />
     <label for="hero-class">Class</label><select id="hero-class">${classes.map(name => `<option value="${name}">${name}</option>`).join("")}</select>
     <label for="world-seed">World seed (integer)</label><input id="world-seed" type="number" value="2026" />
-    <button id="new-game">New Game</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>Continue Saved Game</button>
+    <button id="new-game">▶ START A NEW QUEST</button><button id="continue-game" ${controller.hasSave("main") ? "" : "disabled"}>▶ CONTINUE YOUR QUEST</button>
     <p class="title-note">Local prototype · Keyboard · Mouse · Gamepad-ready controls</p>
   </div></div>`;
   app!.querySelector<HTMLButtonElement>("#new-game")!.onclick = () => {
@@ -126,19 +127,19 @@ function render(): void {
   const cells = map.data.tiles.map((tile, index) => {
     const x = index % map.width, y = Math.floor(index / map.width);
     const isPlayer = x === position.x && y === position.y;
-    const glyph = isPlayer ? "♟" : tileGlyph[tile.kind] ?? "·";
+    const glyph = isPlayer ? "@" : tileGlyph[tile.kind] ?? "·";
     return `<button class="cell ${tileClass[tile.kind] ?? "grass"} ${isPlayer ? "you" : ""}" data-x="${x}" data-y="${y}" title="${tile.kind}" aria-label="${tile.kind} at ${x},${y}">${glyph}</button>`;
   }).join("");
   const status = game.battles.currentBattle?.status;
   app!.innerHTML = `<header><div class="brand"><span>✦</span><div><b>EARTHBOUND REALMS</b><small>TYPE SCRIPT RPG · PLAYABLE PROTOTYPE</small></div></div><div class="topbuttons"><span>Seeded world</span><button id="save-game">Save</button><button id="main-menu">Main menu</button></div></header>
   <nav>${["Character", "Inventory", "Shop", "Crafting", "Quests", "World Map", "Codex"].map(tab => `<button data-tab="${tab}" class="${selectedTab === tab ? "active" : ""}">${tab}</button>`).join("")}</nav>
-  <main><aside class="panel"><h3>ADVENTURER</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
-  <section><div class="panel maphead"><div><h3>WORLD EXPLORER</h3><h1>The Old World Frontier</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
+  <main><aside class="panel"><h3>STATUS</h3><div class="avatar">⚔</div><h2>${escapeHtml(character.name)}</h2><p>${escapeHtml(character.characterClass)} · Level ${character.level}</p><label>Health ${character.hp}/${character.maxHp}</label><div class="bar"><i style="width:${Math.max(0, character.hp / character.maxHp * 100)}%"></i></div><p>Gold ◈ ${character.gold} · XP ${character.xp}</p><hr><h3>QUICK ACTIONS</h3><button class="wide" id="rest">Rest (heal)</button><button class="wide" id="search">Find creature</button><button class="wide" id="talk-elder">Talk to Village Elder</button><p class="hint">Move with WASD, arrow keys, click an adjacent tile, or use the on-screen D-pad.</p></aside>
+  <section><div class="panel maphead"><div><h3>WORLD OF ADVENTURE</h3><h1>The Alefgard Frontier</h1><small>Region: ${escapeHtml(map.data.id)} · ${map.width}×${map.height}</small></div><div><button id="zoom-out">−</button> ${Math.round(zoom * 100)}% <button id="zoom-in">+</button></div></div>
   <div class="mapwrap"><div class="map" style="--scale:${zoom};grid-template-columns:repeat(${map.width},24px);grid-template-rows:repeat(${map.height},24px);">${cells}</div></div>
   <div class="legend">≈ Water · ♣ Forest · ▲ Mountains · ⌂ Town · ♟ You</div>
   <div class="panel"><h3>${status === "active" ? "COMBAT / ADVENTURE LOG" : "ADVENTURE LOG"}</h3><p>${escapeHtml(log)}</p><div class="dpad"><span>Move:</span><button data-move="north">↑</button><button data-move="west">←</button><button data-move="south">↓</button><button data-move="east">→</button></div></div>
   ${battlePanel()}${dialoguePanel()}<div class="panel"><h3>${escapeHtml(selectedTab.toUpperCase())}</h3><div id="tab-content">${tabContent()}</div></div></section>
-  <aside class="panel"><h3>WORLD STATUS</h3><p><small>REGION</small><br><b>Old World Frontier</b></p><p><small>COORDINATES</small><br><b>${position.x}, ${position.y}</b></p><p><small>WORLD SEED</small><br><code>${escapeHtml(map.data.id.replace("starter-region-", ""))}</code></p><hr><h3>DISCOVERIES</h3><p>Explore the region, accept quests, defeat creatures, collect rewards, and save your progress.</p><hr><h3>PROGRESSION</h3><p>Equipment bonus: +${equipment.attackBonus} attack, +${equipment.defense} defense.</p><p class="hint">Online multiplayer is not enabled in this prototype.</p></aside></main><footer>Earthbound Realms · Local save slots · Prototype build ER-TS-MMORPG-0.1.0</footer>`;
+  <aside class="panel"><h3>FIELD NOTES</h3><p><small>REGION</small><br><b>Old World Frontier</b></p><p><small>COORDINATES</small><br><b>${position.x}, ${position.y}</b></p><p><small>WORLD SEED</small><br><code>${escapeHtml(map.data.id.replace("starter-region-", ""))}</code></p><hr><h3>DISCOVERIES</h3><p>Explore the region, accept quests, defeat creatures, collect rewards, and save your progress.</p><hr><h3>PROGRESSION</h3><p>Equipment bonus: +${equipment.attackBonus} attack, +${equipment.defense} defense.</p><p class="hint">Online multiplayer is not enabled in this prototype.</p></aside></main><footer>Earthbound Realms · Local save slots · Prototype build ER-TS-MMORPG-0.1.0</footer>`;
 
   app!.querySelectorAll<HTMLButtonElement>("[data-tab]").forEach(button => button.onclick = () => { selectedTab = button.dataset.tab!; render(); });
   app!.querySelectorAll<HTMLButtonElement>("[data-move]").forEach(button => button.onclick = () => move(button.dataset.move as Direction));
