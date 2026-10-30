@@ -38,6 +38,18 @@ The current `src/main.ts` delegates state to `BrowserGameController` and `GameRu
 
 These are targets, not completed content. The current map is schematic and is not a real Earth map. The backend now provides account registration/login, authenticated cloud-save endpoints, and an authenticated ephemeral WebSocket room relay. The browser game UI is not yet wired to those services, and shared persistent worlds, server-authoritative combat, parties, and cross-process room coordination remain unfinished.
 
+
+## Classic 8-bit RPG presentation
+
+The browser client now uses an original retro console-RPG visual direction inspired by early 8-bit fantasy adventures:
+- Limited blue-and-gold palette, hard pixel borders, square command buttons, and monospaced text.
+- Classic title menu and quest-start flow.
+- Top-down tile-map glyphs, player marker, and compact field/status panels.
+- Blue dialogue panels and retro battle cards with enemy glyph portraits.
+- Responsive layout for desktop and mobile screens.
+
+The visual refresh is presentation-only: it keeps the existing TypeScript game runtime, character progression, inventory, quests, shops, crafting, saves, and combat actions. The current enemy portraits are temporary glyph-based representations; a dedicated original pixel-art sprite atlas and tile set remain a follow-on asset task.
+
 ## Requirements
 - Node.js 20 or later
 - npm
