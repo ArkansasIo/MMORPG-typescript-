@@ -29,3 +29,9 @@ The title screen accepts multiple Tiled JSON files: the first selected file is t
 - `getFacingNpc(direction)` returns the Tiled NPC in the adjacent tile the player faces, or `undefined` when no imported Tiled map/NPC is present.
 - `beginFacingNpcDialogue(direction)` resolves that NPC's `dialogueId` against registered dialogue trees.
 - `openFacingDoor(direction, consumeKey)` attempts to open the adjacent authored door. The caller supplies the key-consumption policy; the callback is not invoked when no door is present.
+
+
+## Resource gathering integration
+- `listResourceNodes()` exposes cloned node status for the UI.
+- `gatherResource(nodeId, hasTool?)` gathers into the active session inventory and records successful quantities against collect quest objectives.
+- Node state is currently in-memory only; save persistence is a known limitation.
