@@ -6,9 +6,19 @@
  * Runtime helpers for map transitions, keyed doors, NPC lookup and encounter regions.
  */
 import type { Position } from "./CollisionSystem";
-import type { TiledMapResult } from "./TiledMapLoader";
+import type { TiledDoor, TiledMapResult, TiledNpc } from "./TiledMapLoader";
 
 export type TiledVisualLayer = "ground" | "overlay";
+export type WorldDirection = "north" | "east" | "south" | "west";
+
+function adjacent(position: Position, direction: WorldDirection): Position {
+  switch (direction) {
+    case "north": return { x: position.x, y: position.y - 1 };
+    case "east": return { x: position.x + 1, y: position.y };
+    case "south": return { x: position.x, y: position.y + 1 };
+    case "west": return { x: position.x - 1, y: position.y };
+  }
+}
 
 export class TiledMapRuntime {
   private readonly openedDoors = new Set<string>();
@@ -24,8 +34,22 @@ export class TiledMapRuntime {
     return this.source.warps.find(warp => warp.x === position.x && warp.y === position.y);
   }
 
-  npcAt(position: Position) {
+  npcAt(position: Position): TiledNpc | undefined {
     return this.source.npcs.find(npc => npc.x === position.x && npc.y === position.y);
+  }
+
+  /** Find an NPC on the tile directly in front of the player. */
+  npcInFrontOf(position: Position, direction: WorldDirection): TiledNpc | undefined {
+    return this.npcAt(adjacent(position, direction));
+  }
+
+  doorAt(position: Position): TiledDoor | undefined {
+    return this.source.doors.find(door => door.x === position.x && door.y === position.y);
+  }
+
+  /** Find a door on the tile directly in front of the player. */
+  doorInFrontOf(position: Position, direction: WorldDirection): TiledDoor | undefined {
+    return this.doorAt(adjacent(position, direction));
   }
 
   canTalkAcross(position: Position): boolean {
@@ -49,10 +73,15 @@ export class TiledMapRuntime {
     this.openedDoors.add(doorId);
     const tileIndex = door.y * this.source.map.width + door.x;
     this.groundGids[tileIndex] = door.replacementTileIndex;
-    // A successfully opened door becomes traversable in the shared domain map.
     const currentTile = this.source.map.data.tiles[tileIndex];
     this.source.map.data.tiles[tileIndex] = { ...currentTile, kind: "floor", blocked: false };
     return true;
+  }
+
+  /** Attempt to open the adjacent door without consuming a key if none is present. */
+  openDoorInFrontOf(position: Position, direction: WorldDirection, consumeKey: () => boolean): boolean {
+    const door = this.doorInFrontOf(position, direction);
+    return door ? this.openDoor(door.id, consumeKey) : false;
   }
 
   tileGidAt(position: Position, layer: TiledVisualLayer = "ground"): number | undefined {
