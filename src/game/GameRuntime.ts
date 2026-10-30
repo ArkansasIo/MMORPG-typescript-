@@ -5,6 +5,9 @@ import { STARTER_ITEMS, STARTER_QUESTS } from "./data/StarterContent";
 import { rollEncounter } from "./data/EncounterTables";
 import { GameSession, type SessionSave } from "./GameSession";
 import { WorldGenerator } from "./world/WorldGenerator";
+import { loadTiledMap, type TiledMapDocument } from "./world/TiledMapLoader";
+import { TiledMapRuntime } from "./world/TiledMapRuntime";
+import type { Position } from "./world/CollisionSystem";
 
 export interface RuntimeOptions {
   seed: number;
@@ -13,17 +16,26 @@ export interface RuntimeOptions {
   characterId?: string;
 }
 
+export interface TiledRuntimeOptions extends RuntimeOptions {
+  mapId: string;
+  mapName: string;
+  document: TiledMapDocument;
+  spawn?: Position;
+}
+
 export class GameRuntime {
   readonly session: GameSession;
   readonly battles: BattleService;
+  readonly tiledWorld?: TiledMapRuntime;
 
-  private constructor(session: GameSession, battles: BattleService) {
+  private constructor(session: GameSession, battles: BattleService, tiledWorld?: TiledMapRuntime) {
     this.session = session;
     this.battles = battles;
+    this.tiledWorld = tiledWorld;
   }
 
   static restore(save: SessionSave): GameRuntime {
-    const match = /^starter-region-(-?\d+)$/.exec(save.mapId);
+    const match = /^starter-region-(-?\\d+)$/.exec(save.mapId);
     if (!match) throw new Error("Save does not identify a restorable starter region");
     const seed = Number(match[1]);
     if (!Number.isSafeInteger(seed)) throw new Error("Saved world seed is invalid");
@@ -71,13 +83,29 @@ export class GameRuntime {
     });
     const spawn = { x: Math.floor(map.data.width / 2), y: Math.floor(map.data.height / 2) };
     const session = new GameSession(character, map, spawn);
-    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
-    for (const quest of STARTER_QUESTS) session.registerQuest(quest);
+    GameRuntime.registerStarterContent(session);
     session.addItem(STARTER_ITEMS[0], 2);
     session.addItem(STARTER_ITEMS[3], 4);
     session.addItem(STARTER_ITEMS[1]);
     session.equipItem("iron-sword");
     return new GameRuntime(session, new BattleService(session));
+  }
+
+  /** Create a playable runtime from an authored Tiled JSON map. */
+  static createFromTiledMap(options: TiledRuntimeOptions): GameRuntime {
+    const loaded = loadTiledMap(options.document, { id: options.mapId, name: options.mapName });
+    const spawn = options.spawn ?? { x: Math.floor(loaded.map.width / 2), y: Math.floor(loaded.map.height / 2) };
+    const character = new Character(options.characterName, options.characterClass, {
+      id: options.characterId
+    });
+    const session = new GameSession(character, loaded.map, spawn);
+    GameRuntime.registerStarterContent(session);
+    return new GameRuntime(session, new BattleService(session), new TiledMapRuntime(loaded));
+  }
+
+  private static registerStarterContent(session: GameSession): void {
+    for (const item of STARTER_ITEMS) session.registerItemDefinition(item);
+    for (const quest of STARTER_QUESTS) session.registerQuest(quest);
   }
 
   move(direction: Parameters<GameSession["move"]>[0]): boolean {
