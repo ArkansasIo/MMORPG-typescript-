@@ -47,4 +47,9 @@ game.move("north");
 const nearbyNpc = game.tiledWorld?.npcAt(game.session.position);
 ```
 
-The framework-independent browser facade also exposes `startTiledMap(options)`. The current browser renderer still renders the procedural map path; this integration makes the imported map available to the domain runtime and tests but does not yet provide Tiled tileset image rendering or map-transition orchestration. Tiled map saves are not yet restorable through the current procedural-only save restoration path; do not treat this as completed persistence.
+The framework-independent browser facade exposes `startTiledMap(options)`. The title screen now accepts a Tiled JSON file upload, validates it, selects the first walkable tile as the player spawn, and starts a session using the existing map renderer. Terrain types and collision are therefore visible/playable immediately. The renderer still does not draw actual Tiled tileset image atlases or the optional second visual layer, and warp transitions, NPC proximity interactions, and keyed-door UI actions are not yet wired into the screen. Tiled map saves are not yet restorable through the current procedural-only save restoration path; do not treat this as completed persistence.
+
+
+## Included sample map
+
+An original metadata-based sample is available at [public/maps/starter-village.json](../public/maps/starter-village.json). It includes a walkable grassland, blocked water/forest terrain, a collision boundary, a village elder, a keyed storehouse door, a talk-across marker, and a warp object. Use the title-screen **Or load a Tiled JSON map** file picker to import it. The sample intentionally contains tile metadata but no copyrighted or third-party image atlas; the game renders its terrain using the existing pixel-style glyph renderer.
