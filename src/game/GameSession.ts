@@ -14,6 +14,7 @@ export interface SessionSave {
   equipment: ReturnType<Inventory["equippedItems"]>;
   quests: ReturnType<QuestEngine["getProgress"]>[];
   tiledWorld?: { maps: Array<{ mapId: string; mapName: string; document: TiledMapDocument; openedDoorIds: string[] }> };
+  resourceNodes?: Array<{ id: string; remaining: number }>;
 }
 export interface QuestRewardResult {
   completedQuestIds: string[];
