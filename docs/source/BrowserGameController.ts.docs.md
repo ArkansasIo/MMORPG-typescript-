@@ -21,10 +21,11 @@ This facade does not render UI or automatically replace the existing prototype s
 
 `startTiledMap(options)` now creates a runtime through `GameRuntime.createFromTiledMap` and resets the interaction service against that imported map's `GameSession`. The caller supplies the typed Tiled document, map ID/name, character details, and optional walkable spawn coordinate.
 
-The current browser renderer does not yet provide a Tiled map picker, tileset image rendering, map transition orchestration, or Tiled-map save restoration.
+The title screen accepts multiple Tiled JSON files: the first selected file is the starting map and the remaining files are registered as warp destinations. The browser resolves registered warps automatically after movement, supports E to speak to the NPC in front of the player, and F to open a facing door by consuming one Iron Key. Tiled tileset image rendering and Tiled-map save restoration remain incomplete.
 
 
 ## Facing-based authored map interactions
 
 - `getFacingNpc(direction)` returns the Tiled NPC in the adjacent tile the player faces, or `undefined` when no imported Tiled map/NPC is present.
+- `beginFacingNpcDialogue(direction)` resolves that NPC's `dialogueId` against registered dialogue trees.
 - `openFacingDoor(direction, consumeKey)` attempts to open the adjacent authored door. The caller supplies the key-consumption policy; the callback is not invoked when no door is present.
