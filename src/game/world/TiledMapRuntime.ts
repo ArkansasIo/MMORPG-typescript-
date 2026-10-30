@@ -78,6 +78,16 @@ export class TiledMapRuntime {
     return true;
   }
 
+  /** Restore previously opened door IDs from a validated local save snapshot. */
+  restoreOpenedDoors(doorIds: string[]): void {
+    if (!Array.isArray(doorIds)) throw new Error("Opened door IDs must be an array");
+    for (const doorId of doorIds) {
+      if (typeof doorId !== "string" || !this.openDoor(doorId, () => true)) {
+        throw new Error("Save references an unknown Tiled door: " + String(doorId));
+      }
+    }
+  }
+
   /** Attempt to open the adjacent door without consuming a key if none is present. */
   openDoorInFrontOf(position: Position, direction: WorldDirection, consumeKey: () => boolean): boolean {
     const door = this.doorInFrontOf(position, direction);
