@@ -15,7 +15,7 @@ Validate Tiled JSON map input and convert its tile/object layers into the existi
 
 ## Supported data
 
-See [Tiled map import guide](../../TILED_MAP_IMPORT.md). Unknown tile kinds default to grass. Water, mountain, and wall tiles block movement. Non-zero collision GIDs block movement. The parser validates dimensions, warp properties, and door replacement tile indexes.
+See [Tiled map import guide](../../TILED_MAP_IMPORT.md). Unknown tile kinds default to grass. Water, mountain, and wall tiles block movement. Non-zero collision GIDs block movement. NPC objects can set a `dialogueId` string property. When omitted, the loader derives a slug from the NPC name, with elder names mapped to the starter `meadow-elder` dialogue. The parser validates dimensions, warp properties, and door replacement tile indexes.
 
 ## Dependencies
 
