@@ -19,7 +19,7 @@ Earthbound Realms is an original retro fantasy RPG prototype combining classic m
 
 
 ### Resource gathering
-The Gathering tab exposes finite resource nodes. Collecting herbs adds materials to inventory and advances the matching collect objective. Node reserves are session-local and currently reset when the browser session is recreated; persistent resource respawn and server authority are not implemented.
+The Gathering tab exposes finite resource nodes. Collecting herbs adds materials to inventory and advances the matching collect objective. Node reserves are stored in local save slots and restored when continuing a game. Shared reserves, timed respawn, and server authority are not implemented.
 
 ### Shop
 The Shop tab lists starter catalog items and allows buying or selling one item per action. Buying checks available gold and inventory capacity; selling pays half the listed item price. Transactions use the existing game-session shop service.
