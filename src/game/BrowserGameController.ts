@@ -11,6 +11,8 @@ import { CraftingService, type CraftResult, type CraftingRecipe } from "./invent
 import { STARTER_ITEMS } from "./data/StarterContent";
 import type { ItemDefinition } from "./inventory/Inventory";
 import { STARTER_RECIPES } from "./data/Recipes";
+import { GatheringService, type GatherResult, type ResourceNode } from "./inventory/GatheringService";
+import { STARTER_RESOURCE_NODES } from "./data/ResourceNodes";
 import { STARTER_CONSUMABLES } from "./data/Consumables";
 import { InteractionService } from "./interactions/InteractionService";
 import { STARTER_DIALOGUE } from "./data/Dialogue";
@@ -26,11 +28,13 @@ export class BrowserGameController {
   private readonly saves: SaveRepository;
   private readonly consumables = new ConsumableService();
   private readonly crafting = new CraftingService(STARTER_ITEMS);
+  private readonly gathering = new GatheringService(STARTER_ITEMS);
 
   constructor(storage: SaveStorage, namespace = "earthbound-realms") {
     this.saves = new SaveRepository({ storage, namespace });
     STARTER_CONSUMABLES.forEach(definition => this.consumables.register(definition));
     STARTER_RECIPES.forEach(recipe => this.crafting.registerRecipe(recipe));
+    STARTER_RESOURCE_NODES.forEach(node => this.gathering.registerNode(node));
   }
 
   get game(): GameRuntime {
@@ -91,6 +95,14 @@ export class BrowserGameController {
 
   useItem(itemId: string): ConsumableResult {
     return this.consumables.use(itemId, this.game.session.inventory, this.game.session.character);
+  }
+
+  listResourceNodes(): ResourceNode[] { return this.gathering.listNodes(); }
+
+  gatherResource(nodeId: string, hasTool = false): GatherResult {
+    const result = this.gathering.gather(nodeId, this.game.session.inventory, hasTool);
+    if (result.success) this.game.session.recordObjective("collect", result.itemId, result.quantity);
+    return result;
   }
 
   listShopItems(): ItemDefinition[] { return STARTER_ITEMS.map(item => ({ ...item })); }
