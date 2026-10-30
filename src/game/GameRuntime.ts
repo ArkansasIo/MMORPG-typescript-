@@ -1,3 +1,10 @@
+/**
+ * @file-id ER-FILE-GAME-RUNTIME-0001
+ * @module-id ER-MOD-GAME-0001
+ * @doc ../../docs/source/GameRuntime.ts.docs.md
+ * @master-doc ../../docs/MASTER_DOCUMENTATION.md
+ * Purpose: compose playable sessions from procedural or authored Tiled worlds.
+ */
 import { Character } from "./character/Character";
 import { BattleService, type BattleResult } from "./combat/BattleService";
 import type { CombatAction } from "./combat/CombatEngine";
