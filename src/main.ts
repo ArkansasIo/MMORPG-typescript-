@@ -29,7 +29,7 @@ const tileClass: Record<string, string> = { grass: "grass", forest: "forest", wa
 function titleScreen(): void {
   gameStarted = false;
   app!.innerHTML = `<div class="title-overlay"><div class="title-card">
-    <div class="title-mark">★</div><p class="eyebrow">A 8-BIT FANTASY ADVENTURE</p>
+    <div class="title-mark">★</div><p class="eyebrow">AN 8-BIT FANTASY ADVENTURE</p>
     <h1>EARTHBOUND<br>REALMS</h1><p class="subtitle">The adventure begins...</p>
     <label for="hero-name">Character name</label><input id="hero-name" maxlength="24" value="Wayfarer" />
     <label for="hero-class">Class</label><select id="hero-class">${classes.map(name => `<option value="${name}">${name}</option>`).join("")}</select>
