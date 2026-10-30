@@ -14,6 +14,7 @@ import { GameSession, type SessionSave } from "./GameSession";
 import { WorldGenerator } from "./world/WorldGenerator";
 import { loadTiledMap, type TiledMapDocument } from "./world/TiledMapLoader";
 import { TiledMapRuntime } from "./world/TiledMapRuntime";
+import { TiledWorldRegistry, type WarpResolution } from "./world/TiledWorldRegistry";
 import type { Position } from "./world/CollisionSystem";
 
 export interface RuntimeOptions {
@@ -28,17 +29,21 @@ export interface TiledRuntimeOptions extends RuntimeOptions {
   mapName: string;
   document: TiledMapDocument;
   spawn?: Position;
+  additionalMaps?: Array<{ mapId: string; mapName: string; document: TiledMapDocument }>;
 }
 
 export class GameRuntime {
   readonly session: GameSession;
   readonly battles: BattleService;
-  readonly tiledWorld?: TiledMapRuntime;
+  tiledWorld?: TiledMapRuntime;
+  readonly tiledRegistry?: TiledWorldRegistry;
+  lastWarpResolution?: WarpResolution;
 
-  private constructor(session: GameSession, battles: BattleService, tiledWorld?: TiledMapRuntime) {
+  private constructor(session: GameSession, battles: BattleService, tiledWorld?: TiledMapRuntime, tiledRegistry?: TiledWorldRegistry) {
     this.session = session;
     this.battles = battles;
     this.tiledWorld = tiledWorld;
+    this.tiledRegistry = tiledRegistry;
   }
 
   static restore(save: SessionSave): GameRuntime {
@@ -101,13 +106,17 @@ export class GameRuntime {
   /** Create a playable runtime from an authored Tiled JSON map. */
   static createFromTiledMap(options: TiledRuntimeOptions): GameRuntime {
     const loaded = loadTiledMap(options.document, { id: options.mapId, name: options.mapName });
+    const additional = (options.additionalMaps ?? []).map(entry =>
+      loadTiledMap(entry.document, { id: entry.mapId, name: entry.mapName })
+    );
+    const registry = new TiledWorldRegistry([loaded, ...additional]);
     const spawn = options.spawn ?? { x: Math.floor(loaded.map.width / 2), y: Math.floor(loaded.map.height / 2) };
     const character = new Character(options.characterName, options.characterClass, {
       id: options.characterId
     });
     const session = new GameSession(character, loaded.map, spawn);
     GameRuntime.registerStarterContent(session);
-    return new GameRuntime(session, new BattleService(session), new TiledMapRuntime(loaded));
+    return new GameRuntime(session, new BattleService(session), registry.get(options.mapId), registry);
   }
 
   private static registerStarterContent(session: GameSession): void {
@@ -116,7 +125,22 @@ export class GameRuntime {
   }
 
   move(direction: Parameters<GameSession["move"]>[0]): boolean {
-    return this.session.move(direction);
+    this.lastWarpResolution = undefined;
+    const moved = this.session.move(direction);
+    if (moved) this.resolveWarpAtCurrentPosition();
+    return moved;
+  }
+
+  /** Resolve and apply a registered authored warp after the player enters its tile. */
+  resolveWarpAtCurrentPosition(): WarpResolution | undefined {
+    if (!this.tiledRegistry || !this.tiledWorld) return undefined;
+    const resolution = this.tiledRegistry.resolveWarp(this.session.map.data.id, this.session.position);
+    this.lastWarpResolution = resolution;
+    if (resolution?.status === "ready") {
+      this.session.transitionTo(resolution.target.source.map, resolution.position);
+      this.tiledWorld = resolution.target;
+    }
+    return resolution;
   }
 
   startEncounter(creatureIds: string[] = ["slime"]): BattleResult {
