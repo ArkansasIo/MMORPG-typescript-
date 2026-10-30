@@ -10,7 +10,7 @@
 ## Public API
 
 - `GameRuntime.create(options)` creates a new runtime.
-- `move(direction)` delegates movement to the session collision system.
+- `move(direction)` delegates movement to the session collision system and resolves a registered Tiled warp when the player enters one.
 - `startEncounter(creatureIds)` starts a battle from creature catalog IDs.
 - `act(action)` submits a player combat action.
 - `save()` returns a versioned session snapshot.
@@ -24,8 +24,8 @@ This runtime is not yet the browser UI's sole state owner. The legacy `src/main.
 
 `GameRuntime.createFromTiledMap(options)` now supports authored Tiled JSON maps. It validates the document through `loadTiledMap`, creates a normal `GameSession` using the imported `TileMap`, and attaches `TiledMapRuntime` as the optional `tiledWorld` property. The existing procedural `create` and `restore` paths remain available.
 
-The browser facade exposes the same capability through `BrowserGameController.startTiledMap(options)`.
+The browser facade exposes the same capability through `BrowserGameController.startTiledMap(options)`. `additionalMaps` registers more Tiled documents in the same world catalog. Successful warps replace the active session map and arrival coordinate; unresolved destinations leave the player on the source map and are exposed through `lastWarpResolution`.
 
 ## Current limitations
 
-Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering, automatic map transition orchestration, and save restoration for Tiled map IDs remain future work. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
+Tiled maps are now usable by the domain session, but the browser renderer still uses its existing procedural tile presentation. Tiled tileset image rendering and save restoration for Tiled map IDs remain future work. The Tiled integration tests are in `src/game/GameRuntime.tiled.test.ts`.
