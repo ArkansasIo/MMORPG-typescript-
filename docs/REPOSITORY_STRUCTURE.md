@@ -21,7 +21,7 @@ EarthboundRealms [ER-ROOT-0001]
 │   ├── style.css               # interface presentation
 │   └── game [ER-DIR-GAME-0001]
 │       ├── types.ts            # shared domain contracts
-│       └── game/world/         # tile map, collision, Tiled JSON importer/runtime
+│       ├── world/               # tile map, collision, Tiled JSON importer/runtime
 │       └── network/             # typed HTTP and WebSocket clients
 ├── database/                   # MySQL schema
 ├── server/                     # Express API, account auth, cloud saves, WebSocket relay
