@@ -45,3 +45,6 @@ IDs are stable and must never be reused. Planned entries must explicitly say Pla
 
 | ER-FILE-GAME-RUNTIME-0001 | ER-MOD-GAME-0001 | [src/game/GameRuntime.ts](../src/game/GameRuntime.ts) | [GameRuntime.ts.docs.md](./source/GameRuntime.ts.docs.md) | Partial |
 | ER-FILE-BROWSER-GAME-CONTROLLER-0001 | ER-MOD-GAME-0001 | [src/game/BrowserGameController.ts](../src/game/BrowserGameController.ts) | [BrowserGameController.ts.docs.md](./source/BrowserGameController.ts.docs.md) | Partial |
+
+| ER-FILE-GATHERING-SERVICE-0001 | ER-MOD-GATHERING-0001 | [GatheringService.ts](../src/game/inventory/GatheringService.ts) | [GatheringService.ts.docs.md](./source/GatheringService.ts.docs.md) | Implemented |
+| ER-FILE-RESOURCE-NODES-0001 | ER-MOD-GATHERING-0001 | [ResourceNodes.ts](../src/game/data/ResourceNodes.ts) | [ResourceNodes.ts.docs.md](./source/ResourceNodes.ts.docs.md) | Implemented |
