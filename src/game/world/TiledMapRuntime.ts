@@ -47,7 +47,11 @@ export class TiledMapRuntime {
     if (this.openedDoors.has(doorId)) return true;
     if (!consumeKey()) return false;
     this.openedDoors.add(doorId);
-    this.groundGids[door.y * this.source.map.width + door.x] = door.replacementTileIndex;
+    const tileIndex = door.y * this.source.map.width + door.x;
+    this.groundGids[tileIndex] = door.replacementTileIndex;
+    // A successfully opened door becomes traversable in the shared domain map.
+    const currentTile = this.source.map.data.tiles[tileIndex];
+    this.source.map.data.tiles[tileIndex] = { ...currentTile, kind: "floor", blocked: false };
     return true;
   }
 
