@@ -13,6 +13,7 @@
 
 - Validates that the initial spawn is inside a walkable tile.
 - Moves one tile at a time and rejects blocked or out-of-bounds movement.
+- `transitionTo(map, spawn)` atomically swaps the active map, collision model, and validated arrival position while preserving character, inventory, and quest state.
 - Records visit objectives for visited coordinates, map exits, and NPC locations.
 - Registers and accepts quests using `QuestEngine`.
 - Grants completed quest XP and gold to the character and reports item reward IDs for a future item-definition resolver.
