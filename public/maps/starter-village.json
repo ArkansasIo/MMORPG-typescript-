@@ -1,0 +1,462 @@
+{
+  "type": "map",
+  "version": "1.10",
+  "tiledversion": "1.10.2",
+  "orientation": "orthogonal",
+  "renderorder": "right-down",
+  "width": 12,
+  "height": 10,
+  "tilewidth": 16,
+  "tileheight": 16,
+  "infinite": false,
+  "properties": [
+    {
+      "name": "description",
+      "type": "string",
+      "value": "An original starter village map for Earthbound Realms."
+    }
+  ],
+  "tilesets": [
+    {
+      "firstgid": 1,
+      "name": "earthbound-original-terrain",
+      "tilewidth": 16,
+      "tileheight": 16,
+      "tilecount": 5,
+      "columns": 5,
+      "tiles": [
+        {
+          "id": 0,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "grass"
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "water"
+            },
+            {
+              "name": "blocked",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "forest"
+            },
+            {
+              "name": "blocked",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "floor"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "properties": [
+            {
+              "name": "kind",
+              "type": "string",
+              "value": "door"
+            },
+            {
+              "name": "blocked",
+              "type": "bool",
+              "value": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "layers": [
+    {
+      "id": 1,
+      "name": "tileLayer",
+      "type": "tilelayer",
+      "width": 12,
+      "height": 10,
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2,
+        1,
+        5,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 2,
+      "name": "collisionLayer",
+      "type": "tilelayer",
+      "width": 12,
+      "height": 10,
+      "x": 0,
+      "y": 0,
+      "opacity": 1,
+      "visible": true,
+      "data": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ]
+    },
+    {
+      "id": 3,
+      "name": "warpLayer",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 10,
+          "name": "North Road",
+          "type": "warp",
+          "x": 88,
+          "y": 16,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "map",
+              "type": "string",
+              "value": "north-road"
+            },
+            {
+              "name": "col",
+              "type": "int",
+              "value": 4
+            },
+            {
+              "name": "row",
+              "type": "int",
+              "value": 8
+            },
+            {
+              "name": "dir",
+              "type": "string",
+              "value": "south"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "name": "npcLayer",
+      "type": "objectgroup",
+      "draworder": "topdown",
+      "objects": [
+        {
+          "id": 11,
+          "name": "Village Elder",
+          "type": "npc",
+          "x": 48,
+          "y": 48,
+          "width": 0,
+          "height": 0,
+          "properties": [
+            {
+              "name": "type",
+              "type": "string",
+              "value": "elder"
+            },
+            {
+              "name": "wanders",
+              "type": "bool",
+              "value": false
+            },
+            {
+              "name": "dir",
+              "type": "string",
+              "value": "south"
+            }
+          ]
+        },
+        {
+          "id": 12,
+          "name": "Old Storehouse Door",
+          "type": "door",
+          "x": 112,
+          "y": 64,
+          "width": 16,
+          "height": 16,
+          "properties": [
+            {
+              "name": "replacementTileIndex",
+              "type": "int",
+              "value": 4
+            }
+          ]
+        },
+        {
+          "id": 13,
+          "name": "Counter",
+          "type": "talkAcross",
+          "x": 48,
+          "y": 32,
+          "width": 16,
+          "height": 16
+        }
+      ]
+    }
+  ]
+}
